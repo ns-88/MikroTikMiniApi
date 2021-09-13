@@ -169,7 +169,7 @@ namespace MikroTikMiniApi.Services
 
                 for (var i = 0; i < parameters.Count; i++)
                 {
-                    var byteArray = GetWordByteArray($"={parameters[i]}");
+                    var byteArray = GetWordByteArray(parameters[i]);
 
                     byteArrays[i] = byteArray;
                     totalBytesLength += byteArray.Length;

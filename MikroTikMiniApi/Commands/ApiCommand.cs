@@ -29,6 +29,13 @@ namespace MikroTikMiniApi.Commands
             return this;
         }
 
+        IApiCommandBuilder IApiCommandBuilder.AddParameter(string text)
+        {
+            _parameters.Add(new ApiCommandParameter(text));
+
+            return this;
+        }
+
         IApiCommand IApiCommandBuilder.Build()
         {
             return this;
