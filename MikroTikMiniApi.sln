@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MikroTikMiniApi", "MikroTikMiniApi\MikroTikMiniApi.csproj", "{3126EC77-182E-4845-954A-B17DC72417A9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MikroTikMiniApi.Tests", "MikroTikMiniApi.Tests\MikroTikMiniApi.Tests.csproj", "{86C76EAD-6216-4E17-ADBF-7A84E8C1D57E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MikroTikMiniApi.Demo", "MikroTikMiniApi.Demo\MikroTikMiniApi.Demo.csproj", "{D5D807AF-4EC2-4057-B1C5-A48314596620}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3126EC77-182E-4845-954A-B17DC72417A9}.Debug|x64.ActiveCfg = Debug|x64
+		{3126EC77-182E-4845-954A-B17DC72417A9}.Debug|x64.Build.0 = Debug|x64
+		{3126EC77-182E-4845-954A-B17DC72417A9}.Release|x64.ActiveCfg = Release|x64
+		{3126EC77-182E-4845-954A-B17DC72417A9}.Release|x64.Build.0 = Release|x64
+		{86C76EAD-6216-4E17-ADBF-7A84E8C1D57E}.Debug|x64.ActiveCfg = Debug|x64
+		{86C76EAD-6216-4E17-ADBF-7A84E8C1D57E}.Debug|x64.Build.0 = Debug|x64
+		{86C76EAD-6216-4E17-ADBF-7A84E8C1D57E}.Release|x64.ActiveCfg = Release|x64
+		{86C76EAD-6216-4E17-ADBF-7A84E8C1D57E}.Release|x64.Build.0 = Release|x64
+		{D5D807AF-4EC2-4057-B1C5-A48314596620}.Debug|x64.ActiveCfg = Debug|x64
+		{D5D807AF-4EC2-4057-B1C5-A48314596620}.Debug|x64.Build.0 = Debug|x64
+		{D5D807AF-4EC2-4057-B1C5-A48314596620}.Release|x64.ActiveCfg = Release|x64
+		{D5D807AF-4EC2-4057-B1C5-A48314596620}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E264DB1B-6297-4F6D-A0DC-178C2984DFE6}
+	EndGlobalSection
+EndGlobal
