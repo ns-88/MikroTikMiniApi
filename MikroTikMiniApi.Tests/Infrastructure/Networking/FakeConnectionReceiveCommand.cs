@@ -5,11 +5,11 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
 {
     internal class FakeConnectionReceiveCommand : FakeConnectionBase
     {
-        private int _invokeIndex;
-
         public override ValueTask ReceiveAsync(Memory<byte> buffer)
         {
-            switch (_invokeIndex)
+            byte[] array;
+
+            switch (InvokeIndex)
             {
                 case 0:
                     //The length of the API response type word.
@@ -17,9 +17,7 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     break;
                 case 1:
                     //!re
-                    buffer.Span[0] = 33;
-                    buffer.Span[1] = 114;
-                    buffer.Span[2] = 101;
+                    FillBuffer(new byte[] { 33, 114, 101 }, buffer);
                     break;
                 case 2:
                     //The length of the first word of the sentence.
@@ -27,13 +25,7 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     break;
                 case 3:
                     //=.id=*1
-                    buffer.Span[0] = 61;
-                    buffer.Span[1] = 46;
-                    buffer.Span[2] = 105;
-                    buffer.Span[3] = 100;
-                    buffer.Span[4] = 61;
-                    buffer.Span[5] = 42;
-                    buffer.Span[6] = 49;
+                    FillBuffer(new byte[] { 61, 46, 105, 100, 61, 42, 49 }, buffer);
                     break;
                 case 4:
                     //The length of the second word of the sentence.
@@ -41,26 +33,14 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     break;
                 case 5:
                     //=name=routeros-smips
-                    buffer.Span[0] = 61;
-                    buffer.Span[1] = 110;
-                    buffer.Span[2] = 97;
-                    buffer.Span[3] = 109;
-                    buffer.Span[4] = 101;
-                    buffer.Span[5] = 61;
-                    buffer.Span[6] = 114;
-                    buffer.Span[7] = 111;
-                    buffer.Span[8] = 117;
-                    buffer.Span[9] = 116;
-                    buffer.Span[10] = 101;
-                    buffer.Span[11] = 114;
-                    buffer.Span[12] = 111;
-                    buffer.Span[13] = 115;
-                    buffer.Span[14] = 45;
-                    buffer.Span[15] = 115;
-                    buffer.Span[16] = 109;
-                    buffer.Span[17] = 105;
-                    buffer.Span[18] = 112;
-                    buffer.Span[19] = 115;
+                    array = new byte[]
+                    {
+                        61, 110, 97, 109, 101, 61, 114, 111,
+                        117, 116, 101, 114, 111, 115, 45,
+                        115, 109, 105, 112, 115
+                    };
+
+                    FillBuffer(array, buffer);
                     break;
                 case 6:
                     //The length of the third word of the sentence.
@@ -68,21 +48,13 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     break;
                 case 7:
                     //=version=6.47.9
-                    buffer.Span[0] = 61;
-                    buffer.Span[1] = 118;
-                    buffer.Span[2] = 101;
-                    buffer.Span[3] = 114;
-                    buffer.Span[4] = 115;
-                    buffer.Span[5] = 105;
-                    buffer.Span[6] = 111;
-                    buffer.Span[7] = 110;
-                    buffer.Span[8] = 61;
-                    buffer.Span[9] = 54;
-                    buffer.Span[10] = 46;
-                    buffer.Span[11] = 52;
-                    buffer.Span[12] = 55;
-                    buffer.Span[13] = 46;
-                    buffer.Span[14] = 57;
+                    array = new byte[]
+                    {
+                        61, 118, 101, 114, 115, 105, 111,
+                        110, 61, 54, 46, 52, 55, 46, 57
+                    };
+
+                    FillBuffer(array, buffer);
                     break;
                 case 8:
                     //Completion of the sentence.
@@ -92,7 +64,7 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     throw new InvalidOperationException();
             }
 
-            _invokeIndex++;
+            NextInvoke();
 
             return ValueTask.CompletedTask;
         }
