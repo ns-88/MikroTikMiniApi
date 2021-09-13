@@ -4,18 +4,24 @@ namespace MikroTikMiniApi.Parameters
 {
     public class ApiCommandParameter
     {
-        public readonly string Name;
-        public readonly string Value;
+        private readonly string _text;
+
+        public ApiCommandParameter(string text)
+        {
+            Guard.ThrowIfEmptyString(text, out _text, nameof(text));
+        }
 
         public ApiCommandParameter(string name, string value)
         {
-            Guard.ThrowIfEmptyString(name, out Name, nameof(name));
-            Guard.ThrowIfEmptyString(value, out Value, nameof(value));
+            Guard.ThrowIfEmptyString(name, nameof(name));
+            Guard.ThrowIfEmptyString(value, nameof(value));
+
+            _text = $"={name}={value}";
         }
 
-        public override string ToString()
+        public static implicit operator string(ApiCommandParameter parameter)
         {
-            return $"{Name}={Value}";
+            return parameter._text;
         }
     }
 }
