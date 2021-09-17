@@ -38,9 +38,14 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
             return new FakeConnectionReceiveCommand();
         }
 
-        public static FakeConnectionQuitAsyncReceiveResponse CreateConnectionQuitAsyncReceiveResponse()
+        public static FakeConnectionQuitAsync CreateConnectionQuitAsync()
         {
-            return new FakeConnectionQuitAsyncReceiveResponse();
+            return new FakeConnectionQuitAsync();
+        }
+
+        public static FakeConnectionExecuteCommandToListAsync CreateConnectionExecuteCommandToListAsync()
+        {
+            return new FakeConnectionExecuteCommandToListAsync();
         }
     }
 }

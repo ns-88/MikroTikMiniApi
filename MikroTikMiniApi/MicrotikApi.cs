@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MikroTikMiniApi.Interfaces;
 using MikroTikMiniApi.Interfaces.Commands;
 using MikroTikMiniApi.Interfaces.Networking;
@@ -35,6 +36,16 @@ namespace MikroTikMiniApi
         public Task<IApiSentence> ExecuteCommandAsync(IApiCommand command)
         {
             return _commandExecutionService.ExecuteCommandAsync(command);
+        }
+
+        public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command)
+        {
+            return _commandExecutionService.ExecuteCommandToEnumerableAsync(command);
+        }
+
+        public Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command)
+        {
+            return _commandExecutionService.ExecuteCommandToListAsync(command);
         }
     }
 }

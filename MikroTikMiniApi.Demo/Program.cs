@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using MikroTikMiniApi.Commands;
 using MikroTikMiniApi.Factories;
 
 namespace MikroTikMiniApi.Demo
@@ -15,7 +16,14 @@ namespace MikroTikMiniApi.Demo
 
             var routerApi = apiFactory.CreateRouterApi(connection);
 
-            await routerApi.AuthenticationAsync("user", "password");
+            await routerApi.AuthenticationAsync("name", "password");
+
+            var sentence = await routerApi.ExecuteCommandAsync(ApiCommand.New("/interface/set")
+                                                                         .AddParameter("disabled", "true")
+                                                                         .AddParameter(".id", "ether1")
+                                                                         .Build());
+
+            var list = await routerApi.ExecuteCommandToListAsync(ApiCommand.New("/ip/service/print").Build());
 
             await routerApi.QuitAsync();
         }

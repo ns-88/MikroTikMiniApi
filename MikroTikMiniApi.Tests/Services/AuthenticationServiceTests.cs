@@ -66,7 +66,7 @@ namespace MikroTikMiniApi.Tests.Services
         public async Task QuitAsync_ReceiveResponse_Success()
         {
             //Arrange
-            var connection = FakeConnectionBase.CreateConnectionQuitAsyncReceiveResponse();
+            var connection = FakeConnectionBase.CreateConnectionQuitAsync();
             var service = new AuthenticationService(new CommandExecutionService(connection));
 
             //Act

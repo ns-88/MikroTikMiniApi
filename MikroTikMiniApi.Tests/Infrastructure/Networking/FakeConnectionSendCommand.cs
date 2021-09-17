@@ -12,7 +12,6 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
             switch (InvokeIndex)
             {
                 case 0:
-                    //The length of the API response type word.
                     buffer.Span[0] = 5;
                     break;
                 case 1:
