@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MikroTikMiniApi.Commands;
 using MikroTikMiniApi.Interfaces.Sentences;
+using MikroTikMiniApi.Models;
 using MikroTikMiniApi.Sentences;
 using MikroTikMiniApi.Services;
 using MikroTikMiniApi.Tests.Infrastructure.Networking;
@@ -117,6 +118,26 @@ namespace MikroTikMiniApi.Tests.Services
             };
 
             Assert.Equal(expectedList, actualList);
+        }
+
+        [Fact]
+        public async Task ExecuteCommandToListAsyncGeneric_ReceiveResponse_Success()
+        {
+            //Arrange
+            var connection = FakeConnectionBase.CreateConnectionExecuteCommandToListAsync();
+            var service = new CommandExecutionService(connection);
+            var command = ApiCommand.New("/ip/service/print").Build();
+
+            //Act
+            var actualList = await service.ExecuteCommandToListAsync<Service>(command);
+
+            //Assert
+            Assert.True(actualList[0].Id == "*0" &&
+                        actualList[0].Name == "telnet" &&
+                        actualList[0].Port == 23 &&
+                        actualList[0].Address == null &&
+                        actualList[0].IsInvalid == true &&
+                        actualList[0].IsDisabled == true);
         }
     }
 }
