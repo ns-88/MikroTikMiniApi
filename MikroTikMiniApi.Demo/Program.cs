@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MikroTikMiniApi.Commands;
 using MikroTikMiniApi.Factories;
+using MikroTikMiniApi.Models;
 
 namespace MikroTikMiniApi.Demo
 {
@@ -23,7 +24,9 @@ namespace MikroTikMiniApi.Demo
                                                                          .AddParameter(".id", "ether1")
                                                                          .Build());
 
-            var list = await routerApi.ExecuteCommandToListAsync(ApiCommand.New("/ip/service/print").Build());
+            var logs = await routerApi.ExecuteCommandToListAsync(ApiCommand.New("/log/print").Build());
+
+            var services = await routerApi.ExecuteCommandToListAsync<Package>(ApiCommand.New("/system/package/print").Build());
 
             await routerApi.QuitAsync();
         }

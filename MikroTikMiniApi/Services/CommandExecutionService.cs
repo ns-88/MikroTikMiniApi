@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MikroTikMiniApi.Exceptions;
 using MikroTikMiniApi.Interfaces.Commands;
+using MikroTikMiniApi.Interfaces.Factories;
 using MikroTikMiniApi.Interfaces.Networking;
 using MikroTikMiniApi.Interfaces.Sentences;
 using MikroTikMiniApi.Interfaces.Services;
@@ -252,13 +253,33 @@ namespace MikroTikMiniApi.Services
 
         public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command)
         {
-            return new SentenceEnumerable(command, this);
+            return new SentenceEnumerableNonGeneric(command, this);
         }
 
         public async Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command)
         {
             var list = new List<IApiSentence>();
-            var enumerable = new SentenceEnumerable(command, this);
+            var enumerable = new SentenceEnumerableNonGeneric(command, this);
+
+            await foreach (var sentence in enumerable.ConfigureAwait(false))
+            {
+                list.Add(sentence);
+            }
+
+            return list;
+        }
+
+        public IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command)
+            where T : class, IModelFactory<T>, new()
+        {
+            return new SentenceEnumerableGeneric<T>(command, this, new T());
+        }
+
+        public async Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command)
+            where T : class, IModelFactory<T>, new()
+        {
+            var list = new List<T>();
+            var enumerable = new SentenceEnumerableGeneric<T>(command, this, new T());
 
             await foreach (var sentence in enumerable.ConfigureAwait(false))
             {
@@ -270,21 +291,18 @@ namespace MikroTikMiniApi.Services
 
         #region Nested types
 
-        private class SentenceEnumerable : IAsyncEnumerable<IApiSentence>
+        private abstract class SentenceEnumerableBase<T> : IAsyncEnumerable<T>
         {
             private readonly IApiCommand _command;
             private readonly ICommandExecutionService _commandExecutionService;
-            private readonly bool _noThrow;
 
-            public SentenceEnumerable(IApiCommand command, ICommandExecutionService commandExecutionService, bool noThrow = true)
+            protected SentenceEnumerableBase(IApiCommand command, ICommandExecutionService commandExecutionService)
             {
                 Guard.ThrowIfNull(command, out _command, nameof(command));
                 Guard.ThrowIfNull(commandExecutionService, out _commandExecutionService, nameof(commandExecutionService));
-
-                _noThrow = noThrow;
             }
 
-            public async IAsyncEnumerator<IApiSentence> GetAsyncEnumerator(CancellationToken cancellationToken = new())
+            protected async ValueTask SendCommandAsync()
             {
                 try
                 {
@@ -294,6 +312,85 @@ namespace MikroTikMiniApi.Services
                 {
                     throw new CommandExecutionFaultException("Передача команды не была выполнена.", ex);
                 }
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            protected async Task<IApiSentence> ReceiveSentenceAsync()
+            {
+                try
+                {
+                    return await _commandExecutionService.ReceiveSentenceAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    throw new CommandExecutionFaultException("Ответ API не был получен.", ex);
+                }
+            }
+
+            public abstract IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = new());
+        }
+
+        private class SentenceEnumerableGeneric<T> : SentenceEnumerableBase<T>
+            where T : class
+        {
+            private readonly IModelFactory<T> _modelFactory;
+
+            public SentenceEnumerableGeneric(IApiCommand command, ICommandExecutionService commandExecutionService, IModelFactory<T> modelFactory)
+                : base(command, commandExecutionService)
+            {
+                Guard.ThrowIfNull(modelFactory, out _modelFactory, nameof(modelFactory));
+            }
+
+            public override async IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+            {
+                await SendCommandAsync().ConfigureAwait(false);
+
+                while (true)
+                {
+                    var sentence = await ReceiveSentenceAsync().ConfigureAwait(false);
+
+                    switch (sentence)
+                    {
+                        case ApiDoneSentence:
+                            yield break;
+                        case ApiReSentence:
+                            yield return _modelFactory.Create(sentence);
+                            break;
+                        default:
+                            {
+                                var exceptions = new List<Exception>();
+
+                                try
+                                {
+                                    await ReceiveSentenceAsync().ConfigureAwait(false);
+                                }
+                                catch (Exception ex)
+                                {
+                                    exceptions.Add(ex);
+                                }
+
+                                exceptions.Add(new CommandExecutionFaultException($"Получение последовательности не было завершено. Тип ответа API: \"{sentence.GetType().Name}\". Текст ответа: \"{sentence.GetText()}\"."));
+
+                                if (exceptions.Count == 2)
+                                    throw new AggregateException(exceptions);
+
+                                throw exceptions[0];
+                            }
+                    }
+                }
+            }
+        }
+
+        private class SentenceEnumerableNonGeneric : SentenceEnumerableBase<IApiSentence>
+        {
+            public SentenceEnumerableNonGeneric(IApiCommand command, ICommandExecutionService commandExecutionService)
+                : base(command, commandExecutionService)
+            {
+            }
+
+            public override async IAsyncEnumerator<IApiSentence> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+            {
+                await SendCommandAsync().ConfigureAwait(false);
 
                 while (true)
                 {
@@ -309,8 +406,10 @@ namespace MikroTikMiniApi.Services
                             break;
                         default:
                             {
-                                var exceptions = new List<Exception>();
+                                Exception exception = null;
                                 IApiSentence lastSentence = null;
+
+                                yield return sentence;
 
                                 try
                                 {
@@ -318,42 +417,17 @@ namespace MikroTikMiniApi.Services
                                 }
                                 catch (Exception ex)
                                 {
-                                    exceptions.Add(ex);
+                                    exception = ex;
                                 }
 
-                                if (exceptions.Count == 0 && lastSentence is not ApiDoneSentence)
-                                    exceptions.Add(new CommandExecutionFaultException($"Получение последовательности не было завершено. Ожидался тип ответа API: \"{nameof(ApiDoneSentence)}\", но был получен тип: \"{sentence.GetType().Name}\". Текст ответа: \"{sentence.GetText()}\""));
+                                if (lastSentence != null)
+                                    yield return lastSentence;
 
-                                if (_noThrow)
-                                {
-                                    yield return sentence;
+                                if (exception == null)
+                                    yield break;
 
-                                    if (exceptions.Count == 0)
-                                        yield break;
-
-                                    throw exceptions[0];
-                                }
-
-                                exceptions.Add(new CommandExecutionFaultException($"Получение последовательности не было завершено. Тип ответа API: \"{sentence.GetType().Name}\". Текст ответа: \"{sentence.GetText()}\"."));
-
-                                if (exceptions.Count == 2)
-                                    throw new AggregateException(exceptions);
-
-                                throw exceptions[0];
+                                throw exception;
                             }
-                    }
-                }
-
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                async Task<IApiSentence> ReceiveSentenceAsync()
-                {
-                    try
-                    {
-                        return await _commandExecutionService.ReceiveSentenceAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new CommandExecutionFaultException("Ответ API не был получен.", ex);
                     }
                 }
             }
