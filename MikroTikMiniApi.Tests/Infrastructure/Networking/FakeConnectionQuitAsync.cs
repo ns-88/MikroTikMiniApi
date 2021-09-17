@@ -3,14 +3,13 @@ using System.Threading.Tasks;
 
 namespace MikroTikMiniApi.Tests.Infrastructure.Networking
 {
-    internal class FakeConnectionQuitAsyncReceiveResponse : FakeConnectionBase
+    internal class FakeConnectionQuitAsync : FakeConnectionBase
     {
         public override ValueTask ReceiveAsync(Memory<byte> buffer)
         {
             switch (InvokeIndex)
             {
                 case 0:
-                    //The length of the API response type word.
                     buffer.Span[0] = 6;
                     break;
                 case 1:
@@ -18,7 +17,6 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     FillBuffer(new byte[] { 33, 102, 97, 116, 97, 108 }, buffer);
                     break;
                 case 2:
-                    //The length of the first word of the sentence.
                     buffer.Span[0] = 29;
                     break;
                 case 3:

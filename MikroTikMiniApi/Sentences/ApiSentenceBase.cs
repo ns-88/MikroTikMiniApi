@@ -33,11 +33,7 @@ namespace MikroTikMiniApi.Sentences
 
             foreach (var word in words)
             {
-                unchecked
-                {
-                    wordsHashCode ^= word.GetHashCode();
-                    wordsHashCode = (wordsHashCode << 7) | (wordsHashCode >> 25);
-                }
+                wordsHashCode ^= word.GetHashCode();
 
                 var match = regex.Match(word);
 

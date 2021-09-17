@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MikroTikMiniApi.Commands;
+using MikroTikMiniApi.Interfaces.Sentences;
 using MikroTikMiniApi.Sentences;
 using MikroTikMiniApi.Services;
 using MikroTikMiniApi.Tests.Infrastructure.Networking;
@@ -58,7 +60,7 @@ namespace MikroTikMiniApi.Tests.Services
         }
 
         [Fact]
-        public async Task ExecuteCommandAsync_ReceiveCommand_Success()
+        public async Task ExecuteCommandAsync_ReceiveResponse_Success()
         {
             //Arrange
             var connection = FakeConnectionBase.CreateConnectionReceiveCommand();
@@ -72,6 +74,49 @@ namespace MikroTikMiniApi.Tests.Services
             var expectedSentence = new ApiReSentence(new[] { "=.id=*1", "=name=routeros-smips", "=version=6.47.9" });
 
             Assert.Equal(expectedSentence, actualSentence);
+        }
+
+        [Fact]
+        public async Task ExecuteCommandToListAsync_SendCommand_Success()
+        {
+            //Arrange
+            var connection = FakeConnectionBase.CreateConnectionSendCommand();
+            var service = new CommandExecutionService(connection);
+            var command = ApiCommand.New("/ip/service/print").Build();
+
+            //Act
+            await service.ExecuteCommandToListAsync(command);
+
+            //Assert
+            var memory = new ReadOnlyMemory<byte>(new byte[]
+            {
+                17, 47, 105, 112, 47, 115, 101,
+                114, 118, 105, 99, 101, 47, 112,
+                114, 105, 110, 116, 0
+            });
+
+            Assert.True(memory.Span.SequenceEqual(connection.SendBuffer.Span));
+        }
+
+        [Fact]
+        public async Task ExecuteCommandToListAsync_ReceiveResponse_Success()
+        {
+            //Arrange
+            var connection = FakeConnectionBase.CreateConnectionExecuteCommandToListAsync();
+            var service = new CommandExecutionService(connection);
+            var command = ApiCommand.New("/ip/service/print").Build();
+
+            //Act
+            var actualList = await service.ExecuteCommandToListAsync(command);
+
+            //Assert
+            var expectedList = new IApiSentence[]
+            {
+                new ApiReSentence(new List<string>{"=.id=*0", "=name=telnet", "=port=23", "=address=", "=invalid=true", "=disabled=true"}),
+                new ApiDoneSentence(new List<string>())
+            };
+
+            Assert.Equal(expectedList, actualList);
         }
     }
 }
