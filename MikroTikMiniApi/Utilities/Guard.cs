@@ -19,6 +19,15 @@ namespace MikroTikMiniApi.Utilities
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T ThrowIfNullRet<T>(T source, string paramName) where T : class
+        {
+            if (source == null)
+                throw new ArgumentNullException(paramName);
+
+            return source;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ThrowIfEmptyString(string source, string paramName)
         {
             if (string.IsNullOrWhiteSpace(source))

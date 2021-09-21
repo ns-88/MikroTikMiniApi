@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MikroTikMiniApi.Interfaces.Commands;
 using MikroTikMiniApi.Interfaces.Factories;
+using MikroTikMiniApi.Interfaces.Models.Settings;
 using MikroTikMiniApi.Interfaces.Sentences;
 
 namespace MikroTikMiniApi.Interfaces
@@ -12,16 +13,16 @@ namespace MikroTikMiniApi.Interfaces
 
         Task QuitAsync();
 
-        Task<IApiSentence> ExecuteCommandAsync(IApiCommand command);
+        Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings settings = null);
 
-        IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command);
+        IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings settings = null);
 
-        Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command);
+        Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings settings = null);
 
-        IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command)
+        IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings settings = null)
             where T : class, IModelFactory<T>, new();
 
-        Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command)
+        Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings settings = null)
             where T : class, IModelFactory<T>, new();
     }
 }

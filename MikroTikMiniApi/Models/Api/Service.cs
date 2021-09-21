@@ -1,13 +1,12 @@
 ﻿using MikroTikMiniApi.Interfaces.Factories;
 using MikroTikMiniApi.Interfaces.Sentences;
 
-namespace MikroTikMiniApi.Models
+namespace MikroTikMiniApi.Models.Api
 {
     public class Service : ModelBase, IModelFactory<Service>
-    {
-        public string Id { get; private set; }
+    { 
         public string Name { get; private set; }
-        public int Port { get; private set; }
+        public int? Port { get; private set; }
         public string Address { get; private set; }
         public bool? IsInvalid { get; private set; }
         public bool? IsDisabled { get; private set; }

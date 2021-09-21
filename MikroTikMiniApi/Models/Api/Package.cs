@@ -1,11 +1,10 @@
 ﻿using MikroTikMiniApi.Interfaces.Factories;
 using MikroTikMiniApi.Interfaces.Sentences;
 
-namespace MikroTikMiniApi.Models
+namespace MikroTikMiniApi.Models.Api
 {
     public class Package : ModelBase, IModelFactory<Package>
     {
-        public string Id { get; private set; }
         public string Name { get; private set; }
         public string Version { get; private set; }
         public string BuildTime { get; private set; }

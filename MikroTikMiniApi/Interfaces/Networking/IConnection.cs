@@ -11,6 +11,6 @@ namespace MikroTikMiniApi.Interfaces.Networking
 
     public interface IControlledConnection : IConnection, IDisposable
     {
-        Task ConnectAsync();
+        ValueTask ConnectAsync();
     }
 }

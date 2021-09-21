@@ -5,7 +5,7 @@ using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi.Commands
 {
-    public class ApiCommand : IApiCommand, IApiCommandBuilder
+    public class ApiCommand : IApiCommand
     {
         private readonly List<ApiCommandParameter> _parameters;
 
@@ -22,28 +22,40 @@ namespace MikroTikMiniApi.Commands
             Text = value;
         }
 
-        IApiCommandBuilder IApiCommandBuilder.AddParameter(string name, string value)
-        {
-            _parameters.Add(new ApiCommandParameter(name, value));
+        #region Builder
 
-            return this;
+        public static ApiCommandBuilder New(string value)
+        {
+            return new ApiCommandBuilder(value);
         }
 
-        IApiCommandBuilder IApiCommandBuilder.AddParameter(string text)
+        public class ApiCommandBuilder
         {
-            _parameters.Add(new ApiCommandParameter(text));
+            private readonly ApiCommand _command;
 
-            return this;
+            public ApiCommandBuilder(string value)
+            {
+                _command = new ApiCommand(value);
+            }
+
+            public ApiCommandBuilder AddParameter(string name, string value)
+            {
+                _command._parameters.Add(new ApiCommandParameter(name, value));
+                return this;
+            }
+
+            public ApiCommandBuilder AddParameter(string text)
+            {
+                _command._parameters.Add(new ApiCommandParameter(text));
+                return this;
+            }
+
+            public IApiCommand Build()
+            {
+                return _command;
+            }
         }
 
-        IApiCommand IApiCommandBuilder.Build()
-        {
-            return this;
-        }
-
-        public static IApiCommandBuilder New(string value)
-        {
-            return new ApiCommand(value);
-        }
+        #endregion
     }
 }
