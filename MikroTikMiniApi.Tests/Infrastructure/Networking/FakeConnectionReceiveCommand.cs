@@ -12,11 +12,11 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
             switch (InvokeIndex)
             {
                 case 0:
-                    buffer.Span[0] = 3;
+                    buffer.Span[0] = SentenceConstants.ReLength;
                     break;
                 case 1:
                     //!re
-                    FillBuffer(new byte[] { 33, 114, 101 }, buffer);
+                    FillBuffer(SentenceConstants.ReArray, buffer);
                     break;
                 case 2:
                     buffer.Span[0] = 7;

@@ -10,11 +10,11 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
             switch (InvokeIndex)
             {
                 case 0:
-                    buffer.Span[0] = 3;
+                    buffer.Span[0] = SentenceConstants.ReLength;
                     break;
                 case 1:
                     //!re
-                    FillBuffer(new byte[] { 33, 114, 101 }, buffer);
+                    FillBuffer(SentenceConstants.ReArray, buffer);
                     break;
                 case 2:
                     buffer.Span[0] = 7;
@@ -59,18 +59,18 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     FillBuffer(new byte[] { 61, 100, 105, 115, 97, 98, 108, 101, 100, 61, 116, 114, 117, 101 }, buffer);
                     break;
                 case 14:
-                    //Completion of the /!re sentence.
+                    //Completion of the !re sentence.
                     buffer.Span[0] = 0;
                     break;
                 case 15:
-                    buffer.Span[0] = 5;
+                    buffer.Span[0] = SentenceConstants.DoneLength;
                     break;
                 case 16:
                     //!done
-                    FillBuffer(new byte[] { 33, 100, 111, 110, 101 }, buffer);
+                    FillBuffer(SentenceConstants.DoneArray, buffer);
                     break;
                 case 17:
-                    //Completion of the /!done sentence.
+                    //Completion of the !done sentence.
                     buffer.Span[0] = 0;
                     break;
                 default:

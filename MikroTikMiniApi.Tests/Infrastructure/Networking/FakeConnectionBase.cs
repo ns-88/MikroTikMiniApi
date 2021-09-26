@@ -28,24 +28,29 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
 
         public abstract ValueTask SendAsync(ReadOnlyMemory<byte> buffer);
 
-        public static FakeConnectionSendCommand CreateConnectionSendCommand()
+        public static FakeConnectionSendCommand CreateForSendCommand()
         {
             return new FakeConnectionSendCommand();
         }
 
-        public static FakeConnectionReceiveCommand CreateConnectionReceiveCommand()
+        public static FakeConnectionReceiveCommand CreateForReceiveCommand()
         {
             return new FakeConnectionReceiveCommand();
         }
 
-        public static FakeConnectionQuitAsync CreateConnectionQuitAsync()
+        public static FakeConnectionQuitAsync CreateForQuitAsync()
         {
             return new FakeConnectionQuitAsync();
         }
 
-        public static FakeConnectionExecuteCommandToListAsync CreateConnectionExecuteCommandToListAsync()
+        public static FakeConnectionExecuteCommandToListAsync CreateForExecuteCommandToListAsync()
         {
             return new FakeConnectionExecuteCommandToListAsync();
+        }
+
+        public static FakeConnectionExecuteCommandToListAsyncFlushStream CreateForExecuteCommandToListAsyncFlushStream()
+        {
+            return new FakeConnectionExecuteCommandToListAsyncFlushStream();
         }
     }
 }

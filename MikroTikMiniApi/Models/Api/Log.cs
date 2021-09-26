@@ -1,11 +1,10 @@
 ﻿using MikroTikMiniApi.Interfaces.Factories;
 using MikroTikMiniApi.Interfaces.Sentences;
 
-namespace MikroTikMiniApi.Models
+namespace MikroTikMiniApi.Models.Api
 {
     public class Log : ModelBase, IModelFactory<Log>
     {
-        public string Id { get; private set; }
         public string Time { get; private set; }
         public string Topics { get; private set; }
         public string Message { get; private set; }

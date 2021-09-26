@@ -13,7 +13,7 @@ namespace MikroTikMiniApi.Tests.Services
         public async Task AuthenticationAsync_SendCommand_Success()
         {
             //Arrange
-            var connection = FakeConnectionBase.CreateConnectionSendCommand();
+            var connection = FakeConnectionBase.CreateForSendCommand();
             var service = new AuthenticationService(new CommandExecutionService(connection));
 
             //Act
@@ -35,7 +35,7 @@ namespace MikroTikMiniApi.Tests.Services
         public async Task AuthenticationAsync_ReceiveResponse_Success()
         {
             //Arrange
-            var connection = FakeConnectionBase.CreateConnectionSendCommand();
+            var connection = FakeConnectionBase.CreateForSendCommand();
             var service = new AuthenticationService(new CommandExecutionService(connection));
 
             //Act
@@ -49,7 +49,7 @@ namespace MikroTikMiniApi.Tests.Services
         public async Task QuitAsync_SendCommand_Success()
         {
             //Arrange
-            var connection = FakeConnectionBase.CreateConnectionSendCommand();
+            var connection = FakeConnectionBase.CreateForSendCommand();
             var service = new AuthenticationService(new CommandExecutionService(connection));
 
             //Act
@@ -66,7 +66,7 @@ namespace MikroTikMiniApi.Tests.Services
         public async Task QuitAsync_ReceiveResponse_Success()
         {
             //Arrange
-            var connection = FakeConnectionBase.CreateConnectionQuitAsync();
+            var connection = FakeConnectionBase.CreateForQuitAsync();
             var service = new AuthenticationService(new CommandExecutionService(connection));
 
             //Act
