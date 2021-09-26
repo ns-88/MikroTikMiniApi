@@ -6,6 +6,8 @@ namespace MikroTikMiniApi.Interfaces.Factories
 {
     public interface IApiFactory
     {
+        IApiSentenceFactory ApiSentenceFactory { get; }
+
         IControlledConnection CreateConnection(IPEndPoint endPoint);
 
         IControlledConnection CreateConnection(IConnectionSettings settings);

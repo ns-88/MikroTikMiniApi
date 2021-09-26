@@ -13,13 +13,17 @@ using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi.Services
 {
+    using ILocalizationService = IAuthenticationLocalizationService;
+
     internal class AuthenticationService : IAuthenticationService
     {
         private readonly ICommandExecutionService _commandExecutionService;
+        private readonly ILocalizationService _localization;
 
-        public AuthenticationService(ICommandExecutionService commandExecutionService)
+        public AuthenticationService(ICommandExecutionService commandExecutionService, ILocalizationService localizationService)
         {
             Guard.ThrowIfNull(commandExecutionService, out _commandExecutionService, nameof(commandExecutionService));
+            Guard.ThrowIfNull(localizationService, out _localization, nameof(localizationService));
         }
 
         private static string EncodePassword(string password, string hash)
@@ -74,7 +78,7 @@ namespace MikroTikMiniApi.Services
             Guard.ThrowIfEmptyString(name, nameof(name));
             Guard.ThrowIfEmptyString(password, nameof(password));
 
-            const string errorMessage = "Команда аутентификации не была выполнена.";
+            var errorMessage = _localization.GetAuthCmdFailedText();
             var authCommand = ApiCommand.New("/login")
                                         .AddParameter("name", name)
                                         .AddParameter("password", password)
@@ -82,11 +86,11 @@ namespace MikroTikMiniApi.Services
 
             var sentence = await ExecuteCommandAsync(authCommand, errorMessage).ConfigureAwait(false);
 
-            ThrowIfSentenceIsNotDone(sentence);
+            ThrowIfSentenceIsNotDone(sentence, _localization);
 
             if (!sentence.TryGetWordValue("ret", out var retValue))
             {
-                ThrowIfSentenceIsNotEmpty(sentence);
+                ThrowIfSentenceIsNotEmpty(sentence, _localization);
 
                 return;
             }
@@ -98,35 +102,33 @@ namespace MikroTikMiniApi.Services
                                            .Build();
 
             sentence = await ExecuteCommandAsync(oldAuthCommand, errorMessage).ConfigureAwait(false);
+            
+            ThrowIfSentenceIsNotDone(sentence, _localization);
+            ThrowIfSentenceIsNotEmpty(sentence, _localization);
 
-            ThrowIfSentenceIsNotDone(sentence);
-            ThrowIfSentenceIsNotEmpty(sentence);
-
-            static void ThrowIfSentenceIsNotDone(IApiSentence sentence)
+            static void ThrowIfSentenceIsNotDone(IApiSentence sentence, ILocalizationService localization)
             {
                 if (sentence is not ApiDoneSentence)
-                {
-                    throw new AuthenticationFaultException($"Аутентификация не была произведена. Тип ответа API: \"{sentence.GetType().Name}\". Текст ответа: \"{sentence.GetText()}\".");
-                }
+                    throw new AuthenticationFaultException(localization.GetAuthFailedText(sentence, sentence.GetText()));
             }
 
-            static void ThrowIfSentenceIsNotEmpty(IApiSentence sentence)
+            static void ThrowIfSentenceIsNotEmpty(IApiSentence sentence, ILocalizationService localization)
             {
                 if (sentence.Words.Count != 0)
-                    throw new InvalidOperationException($"Аутентификация не была произведена. Ответ API \"{sentence.GetType().Name}\" ожидался пустым.");
+                    throw new InvalidOperationException(localization.GetAuthFailedIncorrectAnswerText(sentence));
             }
         }
 
         public async Task QuitAsync()
         {
             var command = ApiCommand.New("/quit").Build();
-            var sentence = await ExecuteCommandAsync(command, "Команда выхода не была выполнена.").ConfigureAwait(false);
+            var sentence = await ExecuteCommandAsync(command, _localization.GetLogoutCmdFailedText()).ConfigureAwait(false);
 
-            if (!(sentence is ApiFatalSentence && 
-                  sentence.Words.Count == 1 && 
+            if (!(sentence is ApiFatalSentence &&
+                  sentence.Words.Count == 1 &&
                   sentence.Words[0].Equals("session terminated on request", StringComparison.OrdinalIgnoreCase)))
             {
-                throw new AuthenticationFaultException($"Выход из системы не был произведен. Тип ответа API: \"{sentence.GetType().Name}\". Текст ответа: \"{sentence.GetText()}\".");
+                throw new AuthenticationFaultException(_localization.GetLogoutFailedText(sentence, sentence.GetText()));
             }
         }
     }

@@ -34,6 +34,8 @@ namespace MikroTikMiniApi.Tests.Infrastructure.Networking
                     //Completion of the sentence.
                     buffer.Span[0] = 0;
                     break;
+                default:
+                    throw new DataReceivingTestFaultException();
             }
 
             NextInvoke();

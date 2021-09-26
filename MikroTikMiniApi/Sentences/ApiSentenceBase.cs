@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using MikroTikMiniApi.Interfaces.Sentences;
+using MikroTikMiniApi.Interfaces.Services;
 using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi.Sentences
 {
-    public abstract class ApiSentenceBase : IApiSentence, IEquatable<ApiSentenceBase>
+    using ILocalizationService = IApiSentenceLocalizationService;
+
+    internal abstract class ApiSentenceBase : IApiSentence, IEquatable<ApiSentenceBase>
     {
         private readonly int _wordsHashCode;
         private readonly int _typeHashCode;
         private readonly IReadOnlyDictionary<string, string> _wordsValues;
+        private readonly ILocalizationService _localizationService;
+
         public IReadOnlyList<string> Words { get; }
 
-        protected ApiSentenceBase(IReadOnlyList<string> words)
+        protected ApiSentenceBase(IReadOnlyList<string> words, ILocalizationService localizationService)
         {
             Guard.ThrowIfNull(words, nameof(words));
+            Guard.ThrowIfNull(localizationService, out _localizationService, nameof(localizationService));
 
             _wordsValues = GetWordsValues(words, out _wordsHashCode);
             _typeHashCode = GetType().GetHashCode();
@@ -49,32 +55,17 @@ namespace MikroTikMiniApi.Sentences
             return wordsValues;
         }
 
-        private static string GetTextInternal(IReadOnlyCollection<string> words)
+        internal static string GetTextInternal(IReadOnlyCollection<string> words, ILocalizationService localizationService)
         {
             if (words.Count == 0)
-                return "Текст ответа не задан";
+                return localizationService.GetResponseIsEmptyText();
 
             var sb = new StringBuilder();
 
             foreach (var word in words)
-            {
                 sb.Append(word);
-            }
 
             return sb.ToString();
-        }
-
-        public static ApiSentenceBase Create(string sentenceName, IReadOnlyList<string> words)
-        {
-            return sentenceName switch
-            {
-                "!done" => new ApiDoneSentence(words),
-                "!trap" => new ApiTrapSentence(words),
-                "!re" => new ApiReSentence(words),
-                "!fatal" => new ApiFatalSentence(words),
-                "" => throw new InvalidOperationException($"Тип ответа API не был получен. Текст ответа: \"{GetTextInternal(words)}\"."),
-                _ => throw new InvalidOperationException($"Неизвестный тип ответа API. Тип ответа: \"{sentenceName}\". Текст ответа: \"{GetTextInternal(words)}\".")
-            };
         }
 
         public bool TryGetWordValue(string word, out string value)
@@ -86,7 +77,7 @@ namespace MikroTikMiniApi.Sentences
 
         public string GetText()
         {
-            return GetTextInternal(Words);
+            return GetTextInternal(Words, _localizationService);
         }
 
         public bool Equals(ApiSentenceBase other)

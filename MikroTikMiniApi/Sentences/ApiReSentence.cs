@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using MikroTikMiniApi.Interfaces.Services;
 
 namespace MikroTikMiniApi.Sentences
 {
-    public class ApiReSentence : ApiSentenceBase
+    internal class ApiReSentence : ApiSentenceBase
     {
-        public ApiReSentence(IReadOnlyList<string> words)
-            : base(words)
+        public ApiReSentence(IReadOnlyList<string> words, IApiSentenceLocalizationService localizationService)
+            : base(words, localizationService)
         {
         }
     }
