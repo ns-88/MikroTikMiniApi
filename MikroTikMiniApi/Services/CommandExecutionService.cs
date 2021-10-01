@@ -18,13 +18,19 @@ using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi.Services
 {
+    using ILocalizationService = ICommandExecutionLocalizationService;
+
     internal class CommandExecutionService : ICommandExecutionService
     {
         private readonly IConnection _connection;
+        private readonly ILocalizationService _localization;
+        private readonly IApiSentenceFactory _sentenceFactory;
 
-        public CommandExecutionService(IConnection connection)
+        public CommandExecutionService(IConnection connection, ILocalizationService localizationService, IApiSentenceFactory sentenceFactory)
         {
             Guard.ThrowIfNull(connection, out _connection, nameof(connection));
+            Guard.ThrowIfNull(localizationService, out _localization, nameof(localizationService));
+            Guard.ThrowIfNull(sentenceFactory, out _sentenceFactory, nameof(sentenceFactory));
         }
 
         private static byte[] EncodeWordLength(in long length)
@@ -102,7 +108,7 @@ namespace MikroTikMiniApi.Services
             return length;
         }
 
-        private static async ValueTask<string> ReadWordAsync(IConnection connection)
+        private static async ValueTask<string> ReadWordAsync(IConnection connection, ILocalizationService localization)
         {
             long wordLength;
 
@@ -112,7 +118,7 @@ namespace MikroTikMiniApi.Services
             }
             catch (Exception ex)
             {
-                throw new CommandExecutionFaultException("Значение длины слова API не было получено.", ex);
+                throw new CommandExecutionFaultException(localization.GetWordLengthValueNotReceivedText(), ex);
             }
 
             if (wordLength <= 0)
@@ -154,7 +160,7 @@ namespace MikroTikMiniApi.Services
                 }
                 catch (Exception ex)
                 {
-                    throw new CommandExecutionFaultException("Ответ API не был получен.", ex);
+                    throw new CommandExecutionFaultException(_localization.GetResponseNotReceivedText(), ex);
                 }
             }
 
@@ -199,7 +205,7 @@ namespace MikroTikMiniApi.Services
             }
             catch (Exception ex)
             {
-                throw new CommandExecutionFaultException("Передача команды не была завершена.", ex);
+                throw new CommandExecutionFaultException(_localization.GetSendingCmdDataNotCompletedText(), ex);
             }
 
             static IEnumerable<byte[]> GetParameterByteArrays(IReadOnlyList<ApiCommandParameter> parameters, out int totalBytesLength)
@@ -239,11 +245,11 @@ namespace MikroTikMiniApi.Services
 
             try
             {
-                sentenceName = await ReadWordAsync(_connection).ConfigureAwait(false);
+                sentenceName = await ReadWordAsync(_connection, _localization).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                throw new CommandExecutionFaultException("Наименование типа предложения не было получено.", ex);
+                throw new CommandExecutionFaultException(_localization.GetSentenceNameNotReceivedText(), ex);
             }
 
             while (true)
@@ -252,11 +258,11 @@ namespace MikroTikMiniApi.Services
 
                 try
                 {
-                    word = await ReadWordAsync(_connection).ConfigureAwait(false);
+                    word = await ReadWordAsync(_connection, _localization).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    throw new CommandExecutionFaultException("Значение слова ответа API не было получено.", ex);
+                    throw new CommandExecutionFaultException(_localization.GetResponseWordNotReceivedText(), ex);
                 }
 
                 if (string.IsNullOrWhiteSpace(word))
@@ -265,7 +271,7 @@ namespace MikroTikMiniApi.Services
                 words.Add(word);
             }
 
-            return ApiSentenceBase.Create(sentenceName, words);
+            return _sentenceFactory.Create(sentenceName, words);
         }
 
         public async Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings settings)
@@ -276,7 +282,7 @@ namespace MikroTikMiniApi.Services
             }
             catch (Exception ex)
             {
-                throw new CommandExecutionFaultException("Передача команды не была выполнена.", ex);
+                throw new CommandExecutionFaultException(_localization.GetCmdSendingNotCompletedText(), ex);
             }
 
             IApiSentence sentence;
@@ -287,7 +293,7 @@ namespace MikroTikMiniApi.Services
             }
             catch (Exception ex)
             {
-                throw new CommandExecutionFaultException("Ответ API не был получен.", ex);
+                throw new CommandExecutionFaultException(_localization.GetResponseNotReceivedText(), ex);
             }
 
             try
@@ -297,7 +303,7 @@ namespace MikroTikMiniApi.Services
             }
             catch (Exception ex)
             {
-                throw new CommandExecutionFaultException("Очистка потока ответов API не была произведена.", ex);
+                throw new CommandExecutionFaultException(_localization.GetResponseStreamNotClearedText(), ex);
             }
 
             return sentence;
@@ -305,13 +311,13 @@ namespace MikroTikMiniApi.Services
 
         public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings settings)
         {
-            return new SentenceEnumerableNonGeneric(command, this, settings);
+            return new SentenceEnumerableNonGeneric(command, this, _localization, settings);
         }
 
         public async Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings settings)
         {
             var list = new List<IApiSentence>();
-            var enumerable = new SentenceEnumerableNonGeneric(command, this, settings);
+            var enumerable = new SentenceEnumerableNonGeneric(command, this, _localization, settings);
 
             await foreach (var sentence in enumerable.ConfigureAwait(false))
             {
@@ -324,14 +330,14 @@ namespace MikroTikMiniApi.Services
         public IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings settings)
             where T : class, IModelFactory<T>, new()
         {
-            return new SentenceEnumerableGeneric<T>(command, this, new T(), settings);
+            return new SentenceEnumerableGeneric<T>(command, this, _localization, new T(), settings);
         }
 
         public async Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings settings)
             where T : class, IModelFactory<T>, new()
         {
             var list = new List<T>();
-            var enumerable = new SentenceEnumerableGeneric<T>(command, this, new T(), settings);
+            var enumerable = new SentenceEnumerableGeneric<T>(command, this, _localization, new T(), settings);
 
             await foreach (var sentence in enumerable.ConfigureAwait(false))
             {
@@ -348,20 +354,23 @@ namespace MikroTikMiniApi.Services
             private readonly IApiCommand _command;
             private readonly ICommandExecutionService _commandExecutionService;
             private readonly IExecutionSettings _settings;
+            protected readonly ILocalizationService Localization;
 
             protected SentenceEnumerableBase(IApiCommand command,
                                              ICommandExecutionService commandExecutionService,
+                                             ILocalizationService localizationService,
                                              IExecutionSettings settings)
             {
                 Guard.ThrowIfNull(command, out _command, nameof(command));
+                Guard.ThrowIfNull(localizationService, out Localization, nameof(localizationService));
                 Guard.ThrowIfNull(commandExecutionService, out _commandExecutionService, nameof(commandExecutionService));
 
                 _settings = settings;
             }
 
-            protected static void ThrowIfUnknownSentence(IApiSentence sentence)
+            protected static void ThrowIfUnknownSentence(IApiSentence sentence, ILocalizationService localization)
             {
-                throw new CommandExecutionFaultException($"Получение последовательности не было завершено - неизвестный тип ответа API. Тип ответа API: \"{sentence.GetType().Name}\". Текст ответа: \"{sentence.GetText()}\".");
+                throw new CommandExecutionFaultException(localization.GetRecvSeqNotCompleteUnknownRespTypeText(sentence, sentence.GetText()));
             }
 
             protected async ValueTask SendCommandAsync()
@@ -372,7 +381,7 @@ namespace MikroTikMiniApi.Services
                 }
                 catch (Exception ex)
                 {
-                    throw new CommandExecutionFaultException("Передача команды не была выполнена.", ex);
+                    throw new CommandExecutionFaultException(Localization.GetCmdSendingNotCompletedText(), ex);
                 }
             }
 
@@ -385,7 +394,7 @@ namespace MikroTikMiniApi.Services
                 }
                 catch (Exception ex)
                 {
-                    throw new CommandExecutionFaultException("Ответ API не был получен.", ex);
+                    throw new CommandExecutionFaultException(Localization.GetResponseNotReceivedText(), ex);
                 }
             }
 
@@ -404,16 +413,17 @@ namespace MikroTikMiniApi.Services
 
             public SentenceEnumerableGeneric(IApiCommand command,
                                              ICommandExecutionService commandExecutionService,
+                                             ILocalizationService localizationService,
                                              IModelFactory<T> modelFactory,
                                              IExecutionSettings settings)
-                : base(command, commandExecutionService, settings)
+                : base(command, commandExecutionService, localizationService, settings)
             {
                 Guard.ThrowIfNull(modelFactory, out _modelFactory, nameof(modelFactory));
             }
 
-            private static Exception GetException(IApiSentence sentence)
+            private static Exception GetException(IApiSentence sentence, ILocalizationService localization)
             {
-                return new CommandExecutionFaultException($"Получение последовательности не было завершено. Тип ответа API: \"{sentence.GetType().Name}\". Текст ответа: \"{sentence.GetText()}\".");
+                return new CommandExecutionFaultException(localization.GetRecvSeqNotCompleteText(sentence, sentence.GetText()));
             }
 
             public override async IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
@@ -432,7 +442,7 @@ namespace MikroTikMiniApi.Services
                             yield return _modelFactory.Create(sentence);
                             break;
                         case ApiFatalSentence:
-                            throw GetException(sentence);
+                            throw GetException(sentence, Localization);
                         case ApiTrapSentence:
                             {
                                 var exceptions = new List<Exception>();
@@ -446,7 +456,7 @@ namespace MikroTikMiniApi.Services
                                     exceptions.Add(ex);
                                 }
 
-                                exceptions.Add(GetException(sentence));
+                                exceptions.Add(GetException(sentence, Localization));
 
                                 if (exceptions.Count == 2)
                                     throw new AggregateException(exceptions);
@@ -454,7 +464,7 @@ namespace MikroTikMiniApi.Services
                                 throw exceptions[0];
                             }
                         default:
-                            ThrowIfUnknownSentence(sentence);
+                            ThrowIfUnknownSentence(sentence, Localization);
                             break;
                     }
                 }
@@ -465,8 +475,9 @@ namespace MikroTikMiniApi.Services
         {
             public SentenceEnumerableNonGeneric(IApiCommand command,
                                                 ICommandExecutionService commandExecutionService,
+                                                ILocalizationService localizationService,
                                                 IExecutionSettings settings)
-                : base(command, commandExecutionService, settings)
+                : base(command, commandExecutionService, localizationService, settings)
             {
             }
 
@@ -514,7 +525,7 @@ namespace MikroTikMiniApi.Services
                                 throw exception;
                             }
                         default:
-                            ThrowIfUnknownSentence(sentence);
+                            ThrowIfUnknownSentence(sentence, Localization);
                             break;
                     }
                 }

@@ -12,16 +12,16 @@ namespace MikroTikMiniApi.Demo
         {
             var apiFactory = new MicrotikApiFactory();
             using var connection = apiFactory.CreateConnection(new IPEndPoint(IPAddress.Parse("192.168.88.1"), 8728));
-
+            
             await connection.ConnectAsync();
 
             var routerApi = apiFactory.CreateRouterApi(connection);
-
+            
             await routerApi.AuthenticationAsync("name", "password");
 
             var sentence = await routerApi.ExecuteCommandAsync(ApiCommand.New("/interface/set")
                                                                          .AddParameter("disabled", "true")
-                                                                         .AddParameter(".id", "ether11")
+                                                                         .AddParameter(".id", "ether1")
                                                                          .Build());
 
             var logs = await routerApi.ExecuteCommandToListAsync(ApiCommand.New("/log/print").Build());

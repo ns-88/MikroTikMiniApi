@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MikroTikMiniApi.Exceptions;
+using MikroTikMiniApi.Factories;
 using MikroTikMiniApi.Services;
 using MikroTikMiniApi.Tests.Infrastructure.Networking;
 using Xunit;
@@ -14,7 +15,10 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForSendCommand();
-            var service = new AuthenticationService(new CommandExecutionService(connection));
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var commandExecutionService = new CommandExecutionService(connection, localizationService, sentenceFactory);
+            var service = new AuthenticationService(commandExecutionService, localizationService);
 
             //Act
             await service.AuthenticationAsync("name", "password");
@@ -36,7 +40,10 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForSendCommand();
-            var service = new AuthenticationService(new CommandExecutionService(connection));
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var commandExecutionService = new CommandExecutionService(connection, localizationService, sentenceFactory);
+            var service = new AuthenticationService(commandExecutionService, localizationService);
 
             //Act
             var exception = await Record.ExceptionAsync(() => service.AuthenticationAsync("name", "password"));
@@ -50,7 +57,10 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForSendCommand();
-            var service = new AuthenticationService(new CommandExecutionService(connection));
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var commandExecutionService = new CommandExecutionService(connection, localizationService, sentenceFactory);
+            var service = new AuthenticationService(commandExecutionService, localizationService);
 
             //Act
             var exception = await Record.ExceptionAsync(() => service.QuitAsync());
@@ -67,7 +77,10 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForQuitAsync();
-            var service = new AuthenticationService(new CommandExecutionService(connection));
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var commandExecutionService = new CommandExecutionService(connection, localizationService, sentenceFactory);
+            var service = new AuthenticationService(commandExecutionService, localizationService);
 
             //Act
             var exception = await Record.ExceptionAsync(() => service.QuitAsync());

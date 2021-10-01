@@ -8,7 +8,6 @@ using MikroTikMiniApi.Interfaces.Networking;
 using MikroTikMiniApi.Interfaces.Sentences;
 using MikroTikMiniApi.Interfaces.Services;
 using MikroTikMiniApi.Services;
-using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi
 {
@@ -17,12 +16,10 @@ namespace MikroTikMiniApi
         private readonly IAuthenticationService _authenticationService;
         private readonly ICommandExecutionService _commandExecutionService;
 
-        public MicrotikApi(IConnection connection)
+        public MicrotikApi(IConnection connection, ILocalizationService localizationService, IApiSentenceFactory sentenceFactory)
         {
-            Guard.ThrowIfNull(connection, nameof(connection));
-
-            _commandExecutionService = new CommandExecutionService(connection);
-            _authenticationService = new AuthenticationService(_commandExecutionService);
+            _commandExecutionService = new CommandExecutionService(connection, localizationService, sentenceFactory);
+            _authenticationService = new AuthenticationService(_commandExecutionService, localizationService);
         }
 
         public Task AuthenticationAsync(string name, string password)

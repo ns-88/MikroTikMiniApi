@@ -5,29 +5,36 @@ using System.Threading;
 using System.Threading.Tasks;
 using MikroTikMiniApi.Interfaces.Models.Settings;
 using MikroTikMiniApi.Interfaces.Networking;
+using MikroTikMiniApi.Interfaces.Services;
 using MikroTikMiniApi.Models.Settings;
 using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi.Networking
 {
+    using ILocalizationService = IConnectionLocalizationService;
+
     internal class Connection : IControlledConnection
     {
         private readonly IConnectionSettings _settings;
+        private readonly ILocalizationService _localization;
         private readonly Socket _socket;
         private readonly SemaphoreSlim _semaphoreSendLock;
         private readonly SemaphoreSlim _semaphoreReceiveLock;
         private CancellationTokenSource _ctsSend;
         private CancellationTokenSource _ctsReceive;
 
-        private Connection()
+        private Connection(ILocalizationService localizationService)
         {
+            Guard.ThrowIfNull(localizationService, out _localization, nameof(localizationService));
+
             _semaphoreSendLock = new SemaphoreSlim(1);
             _semaphoreReceiveLock = new SemaphoreSlim(1);
             _ctsSend = new CancellationTokenSource();
             _ctsReceive = new CancellationTokenSource();
         }
 
-        public Connection(IPEndPoint endPoint) : this()
+        public Connection(IPEndPoint endPoint, ILocalizationService localizationService)
+            : this(localizationService)
         {
             Guard.ThrowIfNull(endPoint, nameof(endPoint));
 
@@ -35,7 +42,8 @@ namespace MikroTikMiniApi.Networking
             _socket = CreateSocket(_settings);
         }
 
-        public Connection(IConnectionSettings settings) : this()
+        public Connection(IConnectionSettings settings, ILocalizationService localizationService)
+            : this(localizationService)
         {
             Guard.ThrowIfNull(settings, out _settings, nameof(settings));
             _socket = CreateSocket(settings);
@@ -56,7 +64,7 @@ namespace MikroTikMiniApi.Networking
             }
             catch (OperationCanceledException)
             {
-                throw new TimeoutException("Подключение не было выполнено за установленный период времени.");
+                throw new TimeoutException(_localization.GetConnectionTimeoutText(_settings.ConnectionTimeout));
             }
         }
 
@@ -78,7 +86,7 @@ namespace MikroTikMiniApi.Networking
                         var received = await _socket.ReceiveAsync(buffer, SocketFlags.None, _ctsReceive.Token).ConfigureAwait(false);
 
                         if (received == 0)
-                            throw new InvalidOperationException("Потеряна связь с удаленным хостом.");
+                            throw new InvalidOperationException(_localization.GetConnectionLostText());
 
                         totalReceived += received;
 
@@ -96,7 +104,7 @@ namespace MikroTikMiniApi.Networking
             catch (OperationCanceledException)
             {
                 _ctsReceive = new CancellationTokenSource();
-                throw new TimeoutException("Получение данных не было выполнено за установленный период времени.");
+                throw new TimeoutException(_localization.GetDataReceivingTimeoutText(_settings.ReceiveTimeout));
             }
             finally
             {
@@ -137,7 +145,7 @@ namespace MikroTikMiniApi.Networking
             catch (OperationCanceledException)
             {
                 _ctsSend = new CancellationTokenSource();
-                throw new TimeoutException("Отправка данных не была выполнена за установленный период времени.");
+                throw new TimeoutException(_localization.GetDataSendingTimeoutText(_settings.SendTimeout));
             }
             finally
             {

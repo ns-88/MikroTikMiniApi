@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MikroTikMiniApi.Commands;
+using MikroTikMiniApi.Factories;
+using MikroTikMiniApi.Interfaces.Factories;
 using MikroTikMiniApi.Interfaces.Sentences;
 using MikroTikMiniApi.Models.Api;
 using MikroTikMiniApi.Models.Settings;
@@ -19,7 +21,9 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForSendCommand();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/system/package/print").Build();
 
             //Act
@@ -40,7 +44,9 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForSendCommand();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/login")
                                     .AddParameter("name", "name")
                                     .AddParameter("password", "password")
@@ -66,14 +72,16 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForReceiveCommand();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/system/package/print").Build();
 
             //Act
             var actualSentence = await service.ExecuteCommandAsync(command, null);
 
             //Assert
-            var expectedSentence = new ApiReSentence(new[] { "=.id=*1", "=name=routeros-smips", "=version=6.47.9" });
+            var expectedSentence = new ApiReSentence(new[] { "=.id=*1", "=name=routeros-smips", "=version=6.47.9" }, localizationService);
 
             Assert.Equal(expectedSentence, actualSentence);
         }
@@ -83,7 +91,9 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForSendCommand();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/ip/service/print").Build();
 
             //Act
@@ -105,7 +115,9 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForExecuteCommandToListAsync();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/ip/service/print").Build();
 
             //Act
@@ -114,8 +126,8 @@ namespace MikroTikMiniApi.Tests.Services
             //Assert
             var expectedList = new IApiSentence[]
             {
-                new ApiReSentence(new List<string>{"=.id=*0", "=name=telnet", "=port=23", "=address=", "=invalid=true", "=disabled=true"}),
-                new ApiDoneSentence(new List<string>())
+                new ApiReSentence(new List<string>{"=.id=*0", "=name=telnet", "=port=23", "=address=", "=invalid=true", "=disabled=true"}, localizationService),
+                new ApiDoneSentence(new List<string>(), localizationService)
             };
 
             Assert.Equal(expectedList, actualList);
@@ -126,7 +138,9 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForExecuteCommandToListAsync();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/ip/service/print").Build();
 
             //Act
@@ -146,7 +160,9 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForExecuteCommandToListAsyncFlushStream();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/interface/print1").Build();
 
             //Act
@@ -155,9 +171,9 @@ namespace MikroTikMiniApi.Tests.Services
             //Assert
             var expectedList = new IApiSentence[]
             {
-                new ApiTrapSentence(new List<string>()),
-                new ApiTrapSentence(new List<string>()),
-                new ApiDoneSentence(new List<string>())
+                new ApiTrapSentence(new List<string>(), localizationService),
+                new ApiTrapSentence(new List<string>(), localizationService),
+                new ApiDoneSentence(new List<string>(), localizationService)
             };
 
             Assert.Equal(expectedList, actualList);
@@ -168,18 +184,23 @@ namespace MikroTikMiniApi.Tests.Services
         {
             //Arrange
             var connection = FakeConnectionBase.CreateForExecuteCommandToListAsyncFlushStream();
-            var service = new CommandExecutionService(connection);
+            var localizationService = new LocalizationService();
+            var sentenceFactory = new ApiSentenceFactory(localizationService);
+            var service = new CommandExecutionService(connection, localizationService, sentenceFactory);
             var command = ApiCommand.New("/interface/print1").Build();
 
             //Act
-            var actualList = await service.ExecuteCommandToListAsync(command, ExecutionSettings.Default.Builder.WithAttemptsCount(3).Build());
+            var actualList = await service.ExecuteCommandToListAsync(command, ExecutionSettings.Default.Builder
+                .WithFlushBeforeDoneSentence(false)
+                .WithAttemptsCount(2)
+                .Build());
 
             //Assert
             var expectedList = new IApiSentence[]
             {
-                new ApiTrapSentence(new List<string>()),
-                new ApiTrapSentence(new List<string>()),
-                new ApiDoneSentence(new List<string>())
+                new ApiTrapSentence(new List<string>(), localizationService),
+                new ApiTrapSentence(new List<string>(), localizationService),
+                new ApiDoneSentence(new List<string>(), localizationService)
             };
 
             Assert.Equal(expectedList, actualList);
