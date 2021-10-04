@@ -20,6 +20,7 @@ namespace MikroTikMiniApi.Services
 {
     using ILocalizationService = ICommandExecutionLocalizationService;
 
+    ///<inheritdoc cref="ICommandExecutionService"/>
     internal class CommandExecutionService : ICommandExecutionService
     {
         private readonly IConnection _connection;
@@ -131,6 +132,7 @@ namespace MikroTikMiniApi.Services
             return Encoding.ASCII.GetString(buffer.Span);
         }
 
+        ///<inheritdoc/>
         async ValueTask<IReadOnlyList<IApiSentence>> ICommandExecutionService.FlushResponseStreamAsync(IExecutionSettings settings)
         {
             var list = new List<IApiSentence>();
@@ -167,6 +169,7 @@ namespace MikroTikMiniApi.Services
             return list;
         }
 
+        ///<inheritdoc/>
         async ValueTask ICommandExecutionService.SendCommandAsync(IApiCommand command)
         {
             byte[] buffer;
@@ -238,6 +241,7 @@ namespace MikroTikMiniApi.Services
             }
         }
 
+        ///<inheritdoc/>
         async ValueTask<IApiSentence> ICommandExecutionService.ReceiveSentenceAsync()
         {
             var words = new List<string>();
@@ -274,6 +278,7 @@ namespace MikroTikMiniApi.Services
             return _sentenceFactory.Create(sentenceName, words);
         }
 
+        ///<inheritdoc/>
         public async Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings settings)
         {
             try
@@ -309,11 +314,13 @@ namespace MikroTikMiniApi.Services
             return sentence;
         }
 
+        ///<inheritdoc/>
         public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings settings)
         {
             return new SentenceEnumerableNonGeneric(command, this, _localization, settings);
         }
 
+        ///<inheritdoc/>
         public async Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings settings)
         {
             var list = new List<IApiSentence>();
@@ -327,12 +334,14 @@ namespace MikroTikMiniApi.Services
             return list;
         }
 
+        ///<inheritdoc/>
         public IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings settings)
             where T : class, IModelFactory<T>, new()
         {
             return new SentenceEnumerableGeneric<T>(command, this, _localization, new T(), settings);
         }
 
+        ///<inheritdoc/>
         public async Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings settings)
             where T : class, IModelFactory<T>, new()
         {

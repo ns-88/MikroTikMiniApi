@@ -5,18 +5,26 @@ using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi.Models.Settings
 {
+    ///<inheritdoc cref="IConnectionSettings"/>
     public class ConnectionSettings : IConnectionSettings
     {
         public static readonly ConnectionSettings Default;
 
+        ///<inheritdoc/>
         public IPEndPoint EndPoint { get; private set; }
+
+        ///<inheritdoc/>
         public TimeSpan ConnectionTimeout { get; private set; }
+
+        ///<inheritdoc/>
         public TimeSpan SendTimeout { get; private set; }
+
+        ///<inheritdoc/>
         public TimeSpan ReceiveTimeout { get; private set; }
 
         static ConnectionSettings()
         {
-            Default = new ConnectionSettings(new IPEndPoint(IPAddress.Loopback, IPEndPoint.MinPort));
+            Default = new ConnectionSettings(new IPEndPoint(IPAddress.Parse("192.168.88.1"), 8728));
         }
 
         public ConnectionSettings(IPEndPoint endPoint)

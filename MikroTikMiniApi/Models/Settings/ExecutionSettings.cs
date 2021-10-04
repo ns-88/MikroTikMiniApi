@@ -2,12 +2,18 @@
 
 namespace MikroTikMiniApi.Models.Settings
 {
+    ///<inheritdoc cref="IExecutionSettings"/>
     public class ExecutionSettings : IExecutionSettings
     {
         public static readonly ExecutionSettings Default;
 
+        ///<inheritdoc/>
         public bool IsFlushResponseStream { get; private set; }
+
+        ///<inheritdoc/>
         public uint AttemptsCount { get; private set; }
+
+        ///<inheritdoc/>
         public bool FlushBeforeDoneSentence { get; private set; }
 
         static ExecutionSettings()
