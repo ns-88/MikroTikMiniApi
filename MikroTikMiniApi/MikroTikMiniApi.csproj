@@ -1,27 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <Platforms>x64</Platforms>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<Platforms>x64</Platforms>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<Authors>ns-88</Authors>
+		<Company />
+		<Product>MikroTikMiniApi</Product>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>A small and lightweight library for working with the MikroTik router API in C#.</Description>
+		<RepositoryUrl>https://github.com/ns-88/MikroTikMiniApi/</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>MikroTik;MikroTikAPI</PackageTags>
+		<PackageProjectUrl>https://github.com/ns-88/MikroTikMiniApi/</PackageProjectUrl>
+		<NeutralLanguage>en</NeutralLanguage>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Update="Resources\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Strings.ru-RU.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\Strings.ru-RU.resx">
+			<Generator></Generator>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>

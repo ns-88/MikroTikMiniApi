@@ -13,6 +13,7 @@ namespace MikroTikMiniApi.Networking
 {
     using ILocalizationService = IConnectionLocalizationService;
 
+    ///<inheritdoc cref="IControlledConnection"/>
     internal class Connection : IControlledConnection
     {
         private readonly IConnectionSettings _settings;
@@ -54,6 +55,7 @@ namespace MikroTikMiniApi.Networking
             return new Socket(settings.EndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         }
 
+        ///<inheritdoc/>
         public async ValueTask ConnectAsync()
         {
             using var cts = new CancellationTokenSource(_settings.ConnectionTimeout);
@@ -68,6 +70,7 @@ namespace MikroTikMiniApi.Networking
             }
         }
 
+        ///<inheritdoc/>
         public async ValueTask ReceiveAsync(Memory<byte> buffer)
         {
             var length = buffer.Length;
@@ -112,6 +115,7 @@ namespace MikroTikMiniApi.Networking
             }
         }
 
+        ///<inheritdoc/>
         public async ValueTask SendAsync(ReadOnlyMemory<byte> buffer)
         {
             var length = buffer.Length;

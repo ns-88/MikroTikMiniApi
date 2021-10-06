@@ -5,51 +5,69 @@ using MikroTikMiniApi.Utilities;
 
 namespace MikroTikMiniApi.Commands
 {
+    ///<inheritdoc cref="IApiCommand"/>
     public class ApiCommand : IApiCommand
     {
         private readonly List<ApiCommandParameter> _parameters;
 
+        ///<inheritdoc/>
         public string Text { get; }
+
+        ///<inheritdoc/>
         public IReadOnlyList<ApiCommandParameter> Parameters { get; }
 
-        private ApiCommand(string value)
+        private ApiCommand(string text)
         {
-            Guard.ThrowIfEmptyString(value, nameof(value));
+            Guard.ThrowIfEmptyString(text, nameof(text));
 
             _parameters = new List<ApiCommandParameter>();
 
             Parameters = _parameters;
-            Text = value;
+            Text = text;
         }
 
         #region Builder
 
-        public static ApiCommandBuilder New(string value)
+        /// <summary>
+        /// Creates a new command.
+        /// </summary>
+        /// <param name="text">Command text.</param>
+        /// <returns>Command builder.</returns>
+        public static ApiCommandBuilder New(string text)
         {
-            return new ApiCommandBuilder(value);
+            return new ApiCommandBuilder(text);
         }
 
+        /// <summary>
+        /// Command builder.
+        /// </summary>
         public class ApiCommandBuilder
         {
             private readonly ApiCommand _command;
 
-            public ApiCommandBuilder(string value)
+            internal ApiCommandBuilder(string text)
             {
-                _command = new ApiCommand(value);
+                _command = new ApiCommand(text);
             }
 
-            public ApiCommandBuilder AddParameter(string name, string value)
-            {
-                _command._parameters.Add(new ApiCommandParameter(name, value));
-                return this;
-            }
-
+            /// <inheritdoc cref="ApiCommandParameter(string)"/>
             public ApiCommandBuilder AddParameter(string text)
             {
                 _command._parameters.Add(new ApiCommandParameter(text));
                 return this;
             }
 
+            /// <inheritdoc cref="ApiCommandParameter(string, string)"/>
+            public ApiCommandBuilder AddParameter(string name, string value)
+            {
+                _command._parameters.Add(new ApiCommandParameter(name, value));
+                return this;
+            }
+
+            /// <summary>
+            /// Returns a ready-to-use command.
+            /// </summary>
+            /// <returns>Command.</returns>
             public IApiCommand Build()
             {
                 return _command;

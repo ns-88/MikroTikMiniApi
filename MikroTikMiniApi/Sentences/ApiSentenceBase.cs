@@ -10,6 +10,7 @@ namespace MikroTikMiniApi.Sentences
 {
     using ILocalizationService = IApiSentenceLocalizationService;
 
+    ///<inheritdoc cref="IApiSentence"/>
     internal abstract class ApiSentenceBase : IApiSentence, IEquatable<ApiSentenceBase>
     {
         private readonly int _wordsHashCode;
@@ -17,6 +18,7 @@ namespace MikroTikMiniApi.Sentences
         private readonly IReadOnlyDictionary<string, string> _wordsValues;
         private readonly ILocalizationService _localizationService;
 
+        ///<inheritdoc/>
         public IReadOnlyList<string> Words { get; }
 
         protected ApiSentenceBase(IReadOnlyList<string> words, ILocalizationService localizationService)
@@ -68,6 +70,7 @@ namespace MikroTikMiniApi.Sentences
             return sb.ToString();
         }
 
+        ///<inheritdoc/>
         public bool TryGetWordValue(string word, out string value)
         {
             Guard.ThrowIfNull(word, nameof(word));
@@ -75,6 +78,7 @@ namespace MikroTikMiniApi.Sentences
             return _wordsValues.TryGetValue(word, out value);
         }
 
+        ///<inheritdoc/>
         public string GetText()
         {
             return GetTextInternal(Words, _localizationService);
