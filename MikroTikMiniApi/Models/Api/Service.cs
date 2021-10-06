@@ -5,9 +5,9 @@ namespace MikroTikMiniApi.Models.Api
 {
     public class Service : ModelBase, IModelFactory<Service>
     { 
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
         public int? Port { get; private set; }
-        public string Address { get; private set; }
+        public string? Address { get; private set; }
         public bool? IsInvalid { get; private set; }
         public bool? IsDisabled { get; private set; }
 
@@ -15,12 +15,12 @@ namespace MikroTikMiniApi.Models.Api
         {
             return new Service
             {
-                Id = GetStringValue(".id", sentence),
-                Name = GetStringValue("name", sentence),
-                Port = GetIntValue("port", sentence),
-                Address = GetStringValue("address", sentence),
-                IsInvalid = GetBoolValue("invalid", sentence),
-                IsDisabled = GetBoolValue("disabled", sentence)
+                Id = GetStringValueOrDefault(".id", sentence),
+                Name = GetStringValueOrDefault("name", sentence),
+                Port = GetIntValueOrDefault("port", sentence),
+                Address = GetStringValueOrDefault("address", sentence),
+                IsInvalid = GetBoolValueOrDefault("invalid", sentence),
+                IsDisabled = GetBoolValueOrDefault("disabled", sentence)
             };
         }
     }

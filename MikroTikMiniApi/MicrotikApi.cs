@@ -11,6 +11,7 @@ using MikroTikMiniApi.Services;
 
 namespace MikroTikMiniApi
 {
+    ///<inheritdoc cref="IRouterApi"/>
     internal class MicrotikApi : IRouterApi
     {
         private readonly IAuthenticationService _authenticationService;
@@ -22,38 +23,45 @@ namespace MikroTikMiniApi
             _authenticationService = new AuthenticationService(_commandExecutionService, localizationService);
         }
 
+        ///<inheritdoc/>
         public Task AuthenticationAsync(string name, string password)
         {
             return _authenticationService.AuthenticationAsync(name, password);
         }
 
+        ///<inheritdoc/>
         public Task QuitAsync()
         {
             return _authenticationService.QuitAsync();
         }
 
-        public Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings settings)
+        ///<inheritdoc/>
+        public Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings? settings)
         {
             return _commandExecutionService.ExecuteCommandAsync(command, settings);
         }
 
-        public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings settings)
+        ///<inheritdoc/>
+        public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings? settings)
         {
             return _commandExecutionService.ExecuteCommandToEnumerableAsync(command, settings);
         }
 
-        public Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings settings)
+        ///<inheritdoc/>
+        public Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings? settings)
         {
             return _commandExecutionService.ExecuteCommandToListAsync(command, settings);
         }
 
-        public IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings settings)
+        ///<inheritdoc/>
+        public IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings? settings)
             where T : class, IModelFactory<T>, new()
         {
             return _commandExecutionService.ExecuteCommandToEnumerableAsync<T>(command, settings);
         }
 
-        public Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings settings)
+        ///<inheritdoc/>
+        public Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings? settings)
             where T : class, IModelFactory<T>, new()
         {
             return _commandExecutionService.ExecuteCommandToListAsync<T>(command, settings);

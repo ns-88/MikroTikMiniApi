@@ -9,6 +9,7 @@ using MikroTikMiniApi.Services;
 
 namespace MikroTikMiniApi.Factories
 {
+    ///<inheritdoc cref="IApiFactory"/>
     public class MicrotikApiFactory : IApiFactory
     {
         private readonly ILocalizationService _localizationService;
@@ -20,16 +21,19 @@ namespace MikroTikMiniApi.Factories
             ApiSentenceFactory = new ApiSentenceFactory(_localizationService);
         }
 
+        ///<inheritdoc/>
         public IControlledConnection CreateConnection(IPEndPoint endPoint)
         {
             return new Connection(endPoint, _localizationService);
         }
 
+        ///<inheritdoc/>
         public IControlledConnection CreateConnection(IConnectionSettings settings)
         {
             return new Connection(settings, _localizationService);
         }
 
+        ///<inheritdoc/>
         public IRouterApi CreateRouterApi(IConnection connection)
         {
             return new MicrotikApi(connection, _localizationService, ApiSentenceFactory);

@@ -15,6 +15,7 @@ namespace MikroTikMiniApi.Services
 {
     using ILocalizationService = IAuthenticationLocalizationService;
 
+    ///<inheritdoc cref="IAuthenticationService"/>
     internal class AuthenticationService : IAuthenticationService
     {
         private readonly ICommandExecutionService _commandExecutionService;
@@ -73,6 +74,7 @@ namespace MikroTikMiniApi.Services
             }
         }
 
+        ///<inheritdoc/>
         public async Task AuthenticationAsync(string name, string password)
         {
             Guard.ThrowIfEmptyString(name, nameof(name));
@@ -119,6 +121,7 @@ namespace MikroTikMiniApi.Services
             }
         }
 
+        ///<inheritdoc/>
         public async Task QuitAsync()
         {
             var command = ApiCommand.New("/quit").Build();
