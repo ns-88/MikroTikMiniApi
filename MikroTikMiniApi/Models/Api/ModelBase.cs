@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using MikroTikMiniApi.Exceptions;
 using MikroTikMiniApi.Interfaces.Sentences;
+using MikroTikMiniApi.Resources;
 
 namespace MikroTikMiniApi.Models.Api
 {
@@ -10,7 +12,7 @@ namespace MikroTikMiniApi.Models.Api
 
         private static Exception GetException<TExpectedType>(string name, string value)
         {
-            return new InvalidOperationException($"Значение не было получено. Ожидаемый тип: \"{typeof(TExpectedType).Name}\", наименование поля: \"{name}\", значение ответа API: \"{value}\".");
+            return new ReceivingModelValueFaultException(string.Format(Strings.ModelValueNotReceived, typeof(TExpectedType).Name, name, value));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

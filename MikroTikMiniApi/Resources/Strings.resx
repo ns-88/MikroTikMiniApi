@@ -157,6 +157,10 @@
     <value>The logout was not performed. API response type: "{0}". Response text: "{1}".</value>
     <comment>AuthenticationLocalizationService</comment>
   </data>
+  <data name="ModelValueNotReceived" xml:space="preserve">
+    <value>The value was not received. Expected type: "{0}", field name: "{1}", API response value: "{2}".</value>
+    <comment>ModelBase</comment>
+  </data>
   <data name="RecvSeqNotComplete" xml:space="preserve">
     <value>Getting the sequence was not completed. API response type: "{0}". Response text: "{1}".</value>
     <comment>CommandExecutionService</comment>

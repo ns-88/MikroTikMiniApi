@@ -151,6 +151,15 @@ namespace MikroTikMiniApi.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на The value was not received. Expected type: &quot;{0}&quot;, field name: &quot;{1}&quot;, API response value: &quot;{2}&quot;..
+        /// </summary>
+        internal static string ModelValueNotReceived {
+            get {
+                return ResourceManager.GetString("ModelValueNotReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Getting the sequence was not completed. API response type: &quot;{0}&quot;. Response text: &quot;{1}&quot;..
         /// </summary>
         internal static string RecvSeqNotComplete {
