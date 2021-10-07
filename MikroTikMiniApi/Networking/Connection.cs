@@ -24,16 +24,17 @@ namespace MikroTikMiniApi.Networking
         private CancellationTokenSource _ctsSend;
         private CancellationTokenSource _ctsReceive;
 
+#nullable disable
         private Connection(ILocalizationService localizationService)
         {
             Guard.ThrowIfNull(localizationService, out _localization, nameof(localizationService));
-
+            
             _semaphoreSendLock = new SemaphoreSlim(1);
             _semaphoreReceiveLock = new SemaphoreSlim(1);
             _ctsSend = new CancellationTokenSource();
             _ctsReceive = new CancellationTokenSource();
         }
-
+#nullable restore
         public Connection(IPEndPoint endPoint, ILocalizationService localizationService)
             : this(localizationService)
         {

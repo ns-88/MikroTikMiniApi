@@ -38,7 +38,7 @@ namespace MikroTikMiniApi.Interfaces.Services
         /// <param name="command">API command.</param>
         /// <param name="settings">Execution settings.</param>
         /// <returns>API sentence.</returns>
-        Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings settings = null);
+        Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings? settings = null);
 
         /// <summary>
         /// Executes a command that returns the result as an asynchronous enumerator of elements of the type <see cref="IApiSentence"/>.
@@ -46,7 +46,7 @@ namespace MikroTikMiniApi.Interfaces.Services
         /// <param name="command">API command.</param>
         /// <param name="settings">Execution settings.</param>
         /// <returns>An enumerator for receiving command results asynchronously.</returns>
-        IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings settings = null);
+        IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings? settings = null);
 
         /// <summary>
         /// Executes a command that returns the result as a collection of elements of type <see cref="IApiSentence"/>.
@@ -54,7 +54,7 @@ namespace MikroTikMiniApi.Interfaces.Services
         /// <param name="command">API command.</param>
         /// <param name="settings">Execution settings.</param>
         /// <returns>Collection of elements.</returns>
-        Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings settings = null);
+        Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings? settings = null);
 
         /// <summary>
         /// Executes a command that returns the result as an asynchronous enumerator of elements of a user-defined type.
@@ -63,7 +63,7 @@ namespace MikroTikMiniApi.Interfaces.Services
         /// <param name="command">API command.</param>
         /// <param name="settings">Execution settings.</param>
         /// <returns>An enumerator for receiving command results asynchronously.</returns>
-        IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings settings = null)
+        IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings? settings = null)
             where T : class, IModelFactory<T>, new();
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace MikroTikMiniApi.Interfaces.Services
         /// <param name="command">API command.</param>
         /// <param name="settings">Execution settings.</param>
         /// <returns>Collection of elements.</returns>
-        Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings settings = null)
+        Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings? settings = null)
             where T : class, IModelFactory<T>, new();
     }
 }

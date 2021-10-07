@@ -1,4 +1,5 @@
-﻿using MikroTikMiniApi.Interfaces.Models.Settings;
+﻿using System.Runtime.CompilerServices;
+using MikroTikMiniApi.Interfaces.Models.Settings;
 
 namespace MikroTikMiniApi.Models.Settings
 {
@@ -27,6 +28,9 @@ namespace MikroTikMiniApi.Models.Settings
             AttemptsCount = isFlushResponseStream ? 1U : 0;
             FlushBeforeDoneSentence = true;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static IExecutionSettings GetValueOrDefault(IExecutionSettings? settings) => settings ?? Default;
 
         #region Builder
 

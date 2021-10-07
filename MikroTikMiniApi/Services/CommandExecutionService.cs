@@ -11,7 +11,6 @@ using MikroTikMiniApi.Interfaces.Models.Settings;
 using MikroTikMiniApi.Interfaces.Networking;
 using MikroTikMiniApi.Interfaces.Sentences;
 using MikroTikMiniApi.Interfaces.Services;
-using MikroTikMiniApi.Models.Settings;
 using MikroTikMiniApi.Parameters;
 using MikroTikMiniApi.Sentences;
 using MikroTikMiniApi.Utilities;
@@ -19,6 +18,7 @@ using MikroTikMiniApi.Utilities;
 namespace MikroTikMiniApi.Services
 {
     using ILocalizationService = ICommandExecutionLocalizationService;
+    using static Models.Settings.ExecutionSettings;
 
     ///<inheritdoc cref="ICommandExecutionService"/>
     internal class CommandExecutionService : ICommandExecutionService
@@ -137,7 +137,7 @@ namespace MikroTikMiniApi.Services
         {
             var list = new List<IApiSentence>();
 
-            settings ??= ExecutionSettings.Default;
+            Guard.ThrowIfNull(settings, nameof(settings));
 
             if (!settings.IsFlushResponseStream)
                 return list;
@@ -172,9 +172,11 @@ namespace MikroTikMiniApi.Services
         ///<inheritdoc/>
         async ValueTask ICommandExecutionService.SendCommandAsync(IApiCommand command)
         {
+            Guard.ThrowIfNull(command, nameof(command));
+
             byte[] buffer;
             var commandArray = GetWordByteArray(command.Text);
-
+            
             if (command.Parameters.Count != 0)
             {
                 var beginIdx = commandArray.Length;
@@ -279,7 +281,7 @@ namespace MikroTikMiniApi.Services
         }
 
         ///<inheritdoc/>
-        public async Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings settings)
+        public async Task<IApiSentence> ExecuteCommandAsync(IApiCommand command, IExecutionSettings? settings)
         {
             try
             {
@@ -304,7 +306,7 @@ namespace MikroTikMiniApi.Services
             try
             {
                 if (sentence is ApiTrapSentence)
-                    await ((ICommandExecutionService)this).FlushResponseStreamAsync(settings).ConfigureAwait(false);
+                    await ((ICommandExecutionService)this).FlushResponseStreamAsync(GetValueOrDefault(settings)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -315,16 +317,16 @@ namespace MikroTikMiniApi.Services
         }
 
         ///<inheritdoc/>
-        public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings settings)
+        public IAsyncEnumerable<IApiSentence> ExecuteCommandToEnumerableAsync(IApiCommand command, IExecutionSettings? settings)
         {
-            return new SentenceEnumerableNonGeneric(command, this, _localization, settings);
+            return new SentenceEnumerableNonGeneric(command, this, _localization, GetValueOrDefault(settings));
         }
 
         ///<inheritdoc/>
-        public async Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings settings)
+        public async Task<IReadOnlyList<IApiSentence>> ExecuteCommandToListAsync(IApiCommand command, IExecutionSettings? settings)
         {
             var list = new List<IApiSentence>();
-            var enumerable = new SentenceEnumerableNonGeneric(command, this, _localization, settings);
+            var enumerable = new SentenceEnumerableNonGeneric(command, this, _localization, GetValueOrDefault(settings));
 
             await foreach (var sentence in enumerable.ConfigureAwait(false))
             {
@@ -335,18 +337,18 @@ namespace MikroTikMiniApi.Services
         }
 
         ///<inheritdoc/>
-        public IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings settings)
+        public IAsyncEnumerable<T> ExecuteCommandToEnumerableAsync<T>(IApiCommand command, IExecutionSettings? settings)
             where T : class, IModelFactory<T>, new()
         {
-            return new SentenceEnumerableGeneric<T>(command, this, _localization, new T(), settings);
+            return new SentenceEnumerableGeneric<T>(command, this, _localization, new T(), GetValueOrDefault(settings));
         }
 
         ///<inheritdoc/>
-        public async Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings settings)
+        public async Task<IReadOnlyList<T>> ExecuteCommandToListAsync<T>(IApiCommand command, IExecutionSettings? settings)
             where T : class, IModelFactory<T>, new()
         {
             var list = new List<T>();
-            var enumerable = new SentenceEnumerableGeneric<T>(command, this, _localization, new T(), settings);
+            var enumerable = new SentenceEnumerableGeneric<T>(command, this, _localization, new T(), GetValueOrDefault(settings));
 
             await foreach (var sentence in enumerable.ConfigureAwait(false))
             {
@@ -508,8 +510,8 @@ namespace MikroTikMiniApi.Services
                             break;
                         case ApiTrapSentence:
                             {
-                                Exception exception = null;
-                                IReadOnlyList<IApiSentence> sentences = null;
+                                Exception exception = null!;
+                                IReadOnlyList<IApiSentence> sentences = null!;
 
                                 yield return sentence;
 
@@ -522,13 +524,13 @@ namespace MikroTikMiniApi.Services
                                     exception = ex;
                                 }
 
-                                if (sentences != null)
+                                if (sentences != null!)
                                 {
                                     foreach (var item in sentences)
                                         yield return item;
                                 }
 
-                                if (exception == null)
+                                if (exception == null!)
                                     yield break;
 
                                 throw exception;

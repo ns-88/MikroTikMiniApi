@@ -75,7 +75,7 @@ namespace MikroTikMiniApi.Sentences
         {
             Guard.ThrowIfNull(word, nameof(word));
 
-            return _wordsValues.TryGetValue(word, out value);
+            return _wordsValues.TryGetValue(word, out value!);
         }
 
         ///<inheritdoc/>
@@ -84,12 +84,12 @@ namespace MikroTikMiniApi.Sentences
             return GetTextInternal(Words, _localizationService);
         }
 
-        public bool Equals(ApiSentenceBase other)
+        public bool Equals(ApiSentenceBase? other)
         {
-            return Equals((object)other);
+            return Equals((object?)other);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is not ApiSentenceBase other)
                 return false;
