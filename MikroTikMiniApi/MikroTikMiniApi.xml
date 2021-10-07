@@ -1,0 +1,702 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MikroTikMiniApi</name>
+    </assembly>
+    <members>
+        <member name="T:MikroTikMiniApi.Commands.ApiCommand">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Commands.IApiCommand"/>
+        </member>
+        <member name="P:MikroTikMiniApi.Commands.ApiCommand.Text">
+            <inheritdoc/>
+        </member>
+        <member name="P:MikroTikMiniApi.Commands.ApiCommand.Parameters">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Commands.ApiCommand.New(System.String)">
+            <summary>
+            Creates a new command.
+            </summary>
+            <param name="text">Command text.</param>
+            <returns>Command builder.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Commands.ApiCommand.ApiCommandBuilder">
+            <summary>
+            Command builder.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Commands.ApiCommand.ApiCommandBuilder.AddParameter(System.String)">
+            <inheritdoc cref="M:MikroTikMiniApi.Parameters.ApiCommandParameter.#ctor(System.String)"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Commands.ApiCommand.ApiCommandBuilder.AddParameter(System.String,System.String)">
+            <inheritdoc cref="M:MikroTikMiniApi.Parameters.ApiCommandParameter.#ctor(System.String,System.String)"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Commands.ApiCommand.ApiCommandBuilder.Build">
+            <summary>
+            Returns a ready-to-use command.
+            </summary>
+            <returns>Command.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Exceptions.AuthenticationFaultException">
+            <summary>
+            An exception thrown in case of an authentication error or logout.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Exceptions.CommandExecutionFaultException">
+            <summary>
+            An exception thrown in case of an error when executing a command.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Exceptions.ReceivingModelValueFaultException">
+            <summary>
+            The exception that is thrown when an error occurs when getting the value of a model field.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Exceptions.SentenceCreationFaultException">
+            <summary>
+            An exception is thrown if an error occurs when creating an API response sentence.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Factories.ApiSentenceFactory">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Factories.IApiSentenceFactory"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.ApiSentenceFactory.MikroTikMiniApi#Interfaces#Factories#IApiSentenceFactory#Create(System.String,System.Collections.Generic.IReadOnlyList{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.ApiSentenceFactory.CreateDoneSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.ApiSentenceFactory.CreateReSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.ApiSentenceFactory.CreateTrapSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.ApiSentenceFactory.CreateFatalSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Factories.MicrotikApiFactory">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Factories.IApiFactory"/>
+        </member>
+        <member name="P:MikroTikMiniApi.Factories.MicrotikApiFactory.ApiSentenceFactory">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.MicrotikApiFactory.CreateConnection(System.Net.IPEndPoint)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.MicrotikApiFactory.CreateConnection(MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Factories.MicrotikApiFactory.CreateRouterApi(MikroTikMiniApi.Interfaces.Networking.IConnection)">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Commands.IApiCommand">
+            <summary>
+            API command.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Commands.IApiCommand.Text">
+            <summary>
+            The text of the command. Must be specified.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Commands.IApiCommand.Parameters">
+            <summary>
+            Command parameters. May not be specified.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Factories.IApiFactory">
+            <summary>
+            API component factory.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Factories.IApiFactory.ApiSentenceFactory">
+            <summary>
+            Returns a factory that creates API sentences.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiFactory.CreateConnection(System.Net.IPEndPoint)">
+            <summary>
+            Creates only the connection object. Connection is not made.
+            </summary>
+            <param name="endPoint">The end point. Includes IP address and port.</param>
+            <returns>Connection object.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiFactory.CreateConnection(MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings)">
+            <summary>
+            Creates only the connection object. Connection is not made.
+            </summary>
+            <param name="settings">Connection settings.</param>
+            <returns>Connection object.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiFactory.CreateRouterApi(MikroTikMiniApi.Interfaces.Networking.IConnection)">
+            <summary>
+            Creates an object containing all the methods for working with the API.
+            </summary>
+            <param name="connection">Connection object. The connection must be established.</param>
+            <returns>API object.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Factories.IApiSentenceFactory">
+            <summary>
+            A factory that creates API sentences.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiSentenceFactory.Create(System.String,System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Creates an API sentence.
+            </summary>
+            <param name="sentenceName">Sentence name.</param>
+            <param name="words">Words that make up a sentence.</param>
+            <returns>API sentence.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiSentenceFactory.CreateDoneSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Creates an API sentence of the "Done" type.
+            </summary>
+            <param name="words">Words that make up a sentence.</param>
+            <returns>API sentence.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiSentenceFactory.CreateReSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Creates an API sentence of the "Re" type.
+            </summary>
+            <param name="words">Words that make up a sentence.</param>
+            <returns>API sentence.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiSentenceFactory.CreateTrapSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Creates an API sentence of the "Trap" type.
+            </summary>
+            <param name="words">Words that make up a sentence.</param>
+            <returns>API sentence.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IApiSentenceFactory.CreateFatalSentence(System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Creates an API sentence of the "Fatal" type.
+            </summary>
+            <param name="words">Words that make up a sentence.</param>
+            <returns>API sentence.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Factories.IModelFactory`1">
+            <summary>
+            Data model factory.
+            </summary>
+            <typeparam name="T">Model type.</typeparam>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Factories.IModelFactory`1.Create(MikroTikMiniApi.Interfaces.Sentences.IApiSentence)">
+            <summary>
+            Creates a data model.
+            </summary>
+            <param name="sentence">The API sentence from which the model is created.</param>
+            <returns>Data model.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.IRouterApi">
+            <summary>
+            API for interacting with the router - executing commands and receiving data.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.IRouterApi.AuthenticationAsync(System.String,System.String)">
+            <inheritdoc cref="M:MikroTikMiniApi.Interfaces.Services.IAuthenticationService.AuthenticationAsync(System.String,System.String)"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.IRouterApi.QuitAsync">
+            <inheritdoc cref="M:MikroTikMiniApi.Interfaces.Services.IAuthenticationService.QuitAsync"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.IRouterApi.ExecuteCommandAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc cref="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.IRouterApi.ExecuteCommandToEnumerableAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc cref="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToEnumerableAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.IRouterApi.ExecuteCommandToListAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc cref="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToListAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.IRouterApi.ExecuteCommandToEnumerableAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc cref="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToEnumerableAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.IRouterApi.ExecuteCommandToListAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc cref="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToListAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)"/>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings">
+            <summary>
+            Connection settings.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings.EndPoint">
+            <summary>
+            End point. Default value: address = 192.168.88.1, port = 8728.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings.ConnectionTimeout">
+            <summary>
+            Connection timeout. Default value: 20 sec.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings.SendTimeout">
+            <summary>
+            Sending timeout. Default value: 30 sec.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings.ReceiveTimeout">
+            <summary>
+            Receiving timeout. Default value: 30 sec.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings">
+            <summary>
+            Command execution settings.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings.IsFlushResponseStream">
+            <summary>
+            A sign that it is necessary to clean up the router's response stream.
+            Clearing is called only if the type of the last API response was ApiTrapSentence.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings.AttemptsCount">
+            <summary>
+            The number of sentences in the router's response stream that will be read if cleanup is enabled.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings.FlushBeforeDoneSentence">
+            <summary>
+            A sign that the router's response stream should be cleared before the ApiDoneSentence type of offer appears.
+            If this parameter is "true", the value of the <see cref="P:MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings.AttemptsCount"/> parameter is ignored.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Networking.IConnection">
+            <summary>
+            TCP connection.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Networking.IConnection.ReceiveAsync(System.Memory{System.Byte})">
+            <summary>
+            Receiving data.
+            </summary>
+            <param name="buffer">Buffer to receive.</param>
+            <returns>A task to wait for.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Networking.IConnection.SendAsync(System.ReadOnlyMemory{System.Byte})">
+            <summary>
+            Sending data.
+            </summary>
+            <param name="buffer">Buffer to send.</param>
+            <returns>A task to wait for.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Networking.IControlledConnection">
+            <summary>
+            TCP connection that allows you to establish a connection and clear resources.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Networking.IControlledConnection.ConnectAsync">
+            <summary>
+            Connecting to a remote host.
+            </summary>
+            <returns>A task to wait for.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Sentences.IApiDoneSentence">
+            <summary>
+            API sentence of the "Done" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Sentences.IApiFatalSentence">
+            <summary>
+            API sentence of the "Fatal" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Sentences.IApiReSentence">
+            <summary>
+            API sentence of the "Re" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Sentences.IApiSentence">
+            <summary>
+            API sentence.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Interfaces.Sentences.IApiSentence.Words">
+            <summary>
+            Words that make up sentences.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Sentences.IApiSentence.TryGetWordValue(System.String,System.String@)">
+            <summary>
+            Gets the value of the API word.
+            </summary>
+            <param name="word">API word.</param>
+            <param name="value">Word value.</param>
+            <returns>A sign that a word has meaning.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Sentences.IApiSentence.GetText">
+            <summary>
+            Returns the words of a sentence as a single string.
+            </summary>
+            <returns>Text string.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Sentences.IApiTrapSentence">
+            <summary>
+            API sentence of the "Trap" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Services.IAuthenticationService">
+            <summary>
+            Service for user authentication and logout.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.IAuthenticationService.AuthenticationAsync(System.String,System.String)">
+            <summary>
+            Authentication on the router. Must be performed before calling any other methods.
+            </summary>
+            <param name="name">User name.</param>
+            <param name="password">User password.</param>
+            <returns>A task to wait for.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.IAuthenticationService.QuitAsync">
+            <summary>
+            Log out of the system.
+            </summary>
+            <returns>A task to wait for.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService">
+            <summary>
+            Service for executing API commands.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.SendCommandAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand)">
+            <summary>
+            Sends an API command to the router.
+            </summary>
+            <param name="command">API command.</param>
+            <returns>A task to wait for.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ReceiveSentenceAsync">
+            <summary>
+            Gets the result of executing the command in the form of a single API sentence.
+            </summary>
+            <returns>API sentence.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.FlushResponseStreamAsync(MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <summary>
+            Clears the router API response stream. Called only if the type of the last API response was ApiTrapSentence.
+            </summary>
+            <param name="settings"></param>
+            <returns>Received sentences from the stream.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <summary>
+            Executes the command returning a scalar result.
+            </summary>
+            <param name="command">API command.</param>
+            <param name="settings">Execution settings.</param>
+            <returns>API sentence.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToEnumerableAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <summary>
+            Executes a command that returns the result as an asynchronous enumerator of elements of the type <see cref="T:MikroTikMiniApi.Interfaces.Sentences.IApiSentence"/>.
+            </summary>
+            <param name="command">API command.</param>
+            <param name="settings">Execution settings.</param>
+            <returns>An enumerator for receiving command results asynchronously.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToListAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <summary>
+            Executes a command that returns the result as a collection of elements of type <see cref="T:MikroTikMiniApi.Interfaces.Sentences.IApiSentence"/>.
+            </summary>
+            <param name="command">API command.</param>
+            <param name="settings">Execution settings.</param>
+            <returns>Collection of elements.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToEnumerableAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <summary>
+            Executes a command that returns the result as an asynchronous enumerator of elements of a user-defined type.
+            </summary>
+            <typeparam name="T">A data model that is also a factory that creates objects of this type.</typeparam>
+            <param name="command">API command.</param>
+            <param name="settings">Execution settings.</param>
+            <returns>An enumerator for receiving command results asynchronously.</returns>
+        </member>
+        <member name="M:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService.ExecuteCommandToListAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <summary>
+            Executes a command that returns the result as a collection of elements of a user-defined type.
+            </summary>
+            <typeparam name="T">A data model that is also a factory that creates objects of this type.</typeparam>
+            <param name="command">API command.</param>
+            <param name="settings">Execution settings.</param>
+            <returns>Collection of elements.</returns>
+        </member>
+        <member name="T:MikroTikMiniApi.MicrotikApi">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.IRouterApi"/>
+        </member>
+        <member name="M:MikroTikMiniApi.MicrotikApi.AuthenticationAsync(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.MicrotikApi.QuitAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.MicrotikApi.ExecuteCommandAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.MicrotikApi.ExecuteCommandToEnumerableAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.MicrotikApi.ExecuteCommandToListAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.MicrotikApi.ExecuteCommandToEnumerableAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.MicrotikApi.ExecuteCommandToListAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Models.Settings.ConnectionSettings">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Models.Settings.IConnectionSettings"/>
+        </member>
+        <member name="P:MikroTikMiniApi.Models.Settings.ConnectionSettings.EndPoint">
+            <inheritdoc/>
+        </member>
+        <member name="P:MikroTikMiniApi.Models.Settings.ConnectionSettings.ConnectionTimeout">
+            <inheritdoc/>
+        </member>
+        <member name="P:MikroTikMiniApi.Models.Settings.ConnectionSettings.SendTimeout">
+            <inheritdoc/>
+        </member>
+        <member name="P:MikroTikMiniApi.Models.Settings.ConnectionSettings.ReceiveTimeout">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Models.Settings.ExecutionSettings">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings"/>
+        </member>
+        <member name="P:MikroTikMiniApi.Models.Settings.ExecutionSettings.IsFlushResponseStream">
+            <inheritdoc/>
+        </member>
+        <member name="P:MikroTikMiniApi.Models.Settings.ExecutionSettings.AttemptsCount">
+            <inheritdoc/>
+        </member>
+        <member name="P:MikroTikMiniApi.Models.Settings.ExecutionSettings.FlushBeforeDoneSentence">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Networking.Connection">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Networking.IControlledConnection"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Networking.Connection.ConnectAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Networking.Connection.ReceiveAsync(System.Memory{System.Byte})">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Networking.Connection.SendAsync(System.ReadOnlyMemory{System.Byte})">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Parameters.ApiCommandParameter">
+            <summary>
+            Command parameter.
+            </summary>
+        </member>
+        <member name="M:MikroTikMiniApi.Parameters.ApiCommandParameter.#ctor(System.String)">
+            <summary>
+            Creates a new parameter with some arbitrary text.
+            </summary>
+            <param name="text">Arbitrary text.</param>
+        </member>
+        <member name="M:MikroTikMiniApi.Parameters.ApiCommandParameter.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new parameter with a name and value.
+            </summary>
+            <param name="name">Parameter name.</param>
+            <param name="value">Parameter value.</param>
+        </member>
+        <member name="T:MikroTikMiniApi.Resources.Strings">
+            <summary>
+              Класс ресурса со строгой типизацией для поиска локализованных строк и т.д.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ResourceManager">
+            <summary>
+              Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.Culture">
+            <summary>
+              Перезаписывает свойство CurrentUICulture текущего потока для всех
+              обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.AuthCmdFailed">
+            <summary>
+              Ищет локализованную строку, похожую на The authentication command was not executed..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.AuthFailed">
+            <summary>
+              Ищет локализованную строку, похожую на Authentication was not performed. API response type: &quot;{0}&quot;. Response text: &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.AuthFailedIncorrectAnswer">
+            <summary>
+              Ищет локализованную строку, похожую на Authentication was not performed. The API response &quot;{0}&quot; was expected to be empty..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.CmdSendingNotCompleted">
+            <summary>
+              Ищет локализованную строку, похожую на The command sending was not completed..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ConnectionLost">
+            <summary>
+              Ищет локализованную строку, похожую на Communication with the remote host is lost..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ConnectionTimeout">
+            <summary>
+              Ищет локализованную строку, похожую на The connection was not completed within the specified time period. Timeout: &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.DataReceivingTimeout">
+            <summary>
+              Ищет локализованную строку, похожую на The data was not received within the specified time period. Timeout: &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.DataSendingTimeout">
+            <summary>
+              Ищет локализованную строку, похожую на The data was not sent within the specified time period. Timeout: &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.LogoutCmdFailed">
+            <summary>
+              Ищет локализованную строку, похожую на The logout command was not executed..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.LogoutFailed">
+            <summary>
+              Ищет локализованную строку, похожую на The logout was not performed. API response type: &quot;{0}&quot;. Response text: &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ModelValueNotReceived">
+            <summary>
+              Ищет локализованную строку, похожую на The value was not received. Expected type: &quot;{0}&quot;, field name: &quot;{1}&quot;, API response value: &quot;{2}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.RecvSeqNotComplete">
+            <summary>
+              Ищет локализованную строку, похожую на Getting the sequence was not completed. API response type: &quot;{0}&quot;. Response text: &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.RecvSeqNotCompleteUnknownRespType">
+            <summary>
+              Ищет локализованную строку, похожую на Getting the sequence was not completed - unknown type of API response. Response type: &quot;{0}&quot;. Response text: &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ResponseIsEmpty">
+            <summary>
+              Ищет локализованную строку, похожую на The response text is empty.
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ResponseNotReceived">
+            <summary>
+              Ищет локализованную строку, похожую на The API response was not received..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ResponseStreamNotCleared">
+            <summary>
+              Ищет локализованную строку, похожую на The API response stream was not cleared..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ResponseTypeNotReceived">
+            <summary>
+              Ищет локализованную строку, похожую на The API response type was not received. Response text: &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.ResponseWordNotReceived">
+            <summary>
+              Ищет локализованную строку, похожую на The API response word value was not received..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.SendingCmdDataNotCompleted">
+            <summary>
+              Ищет локализованную строку, похожую на The sending of the command data was not completed..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.SentenceNameNotReceived">
+            <summary>
+              Ищет локализованную строку, похожую на The name of the sentence type was not received..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.UnknownResponseType">
+            <summary>
+              Ищет локализованную строку, похожую на Unknown API response type. Response type: &quot;{0}&quot;. Response text: &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:MikroTikMiniApi.Resources.Strings.WordLengthValueNotReceived">
+            <summary>
+              Ищет локализованную строку, похожую на The API word length value was not received..
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Sentences.ApiDoneSentence">
+            <summary>
+            API sentence of the "Done" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Sentences.ApiFatalSentence">
+            <summary>
+            API sentence of the "Fatal" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Sentences.ApiReSentence">
+            <summary>
+            API sentence of the "Re" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Sentences.ApiSentenceBase">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Sentences.IApiSentence"/>
+        </member>
+        <member name="P:MikroTikMiniApi.Sentences.ApiSentenceBase.Words">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Sentences.ApiSentenceBase.TryGetWordValue(System.String,System.String@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Sentences.ApiSentenceBase.GetText">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Sentences.ApiTrapSentence">
+            <summary>
+            API sentence of the "Trap" type.
+            </summary>
+        </member>
+        <member name="T:MikroTikMiniApi.Services.AuthenticationService">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Services.IAuthenticationService"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.AuthenticationService.AuthenticationAsync(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.AuthenticationService.QuitAsync">
+            <inheritdoc/>
+        </member>
+        <member name="T:MikroTikMiniApi.Services.CommandExecutionService">
+            <inheritdoc cref="T:MikroTikMiniApi.Interfaces.Services.ICommandExecutionService"/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.MikroTikMiniApi#Interfaces#Services#ICommandExecutionService#FlushResponseStreamAsync(MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.MikroTikMiniApi#Interfaces#Services#ICommandExecutionService#SendCommandAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.MikroTikMiniApi#Interfaces#Services#ICommandExecutionService#ReceiveSentenceAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.ExecuteCommandAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.ExecuteCommandToEnumerableAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.ExecuteCommandToListAsync(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.ExecuteCommandToEnumerableAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+        <member name="M:MikroTikMiniApi.Services.CommandExecutionService.ExecuteCommandToListAsync``1(MikroTikMiniApi.Interfaces.Commands.IApiCommand,MikroTikMiniApi.Interfaces.Models.Settings.IExecutionSettings)">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>
