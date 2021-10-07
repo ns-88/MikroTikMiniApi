@@ -13,6 +13,6 @@ namespace MikroTikMiniApi.Interfaces.Factories
         /// </summary>
         /// <param name="sentence">The API sentence from which the model is created.</param>
         /// <returns>Data model.</returns>
-        internal T Create(IApiSentence sentence);
+        T Create(IApiSentence sentence);
     }
 }
