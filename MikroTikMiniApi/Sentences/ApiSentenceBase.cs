@@ -10,6 +10,7 @@ namespace MikroTikMiniApi.Sentences
 {
     using ILocalizationService = IApiSentenceLocalizationService;
 
+    ///<inheritdoc cref="IApiSentence"/>
     internal abstract class ApiSentenceBase : IApiSentence, IEquatable<ApiSentenceBase>
     {
         private readonly int _wordsHashCode;
@@ -17,6 +18,7 @@ namespace MikroTikMiniApi.Sentences
         private readonly IReadOnlyDictionary<string, string> _wordsValues;
         private readonly ILocalizationService _localizationService;
 
+        ///<inheritdoc/>
         public IReadOnlyList<string> Words { get; }
 
         protected ApiSentenceBase(IReadOnlyList<string> words, ILocalizationService localizationService)
@@ -68,24 +70,26 @@ namespace MikroTikMiniApi.Sentences
             return sb.ToString();
         }
 
+        ///<inheritdoc/>
         public bool TryGetWordValue(string word, out string value)
         {
             Guard.ThrowIfNull(word, nameof(word));
 
-            return _wordsValues.TryGetValue(word, out value);
+            return _wordsValues.TryGetValue(word, out value!);
         }
 
+        ///<inheritdoc/>
         public string GetText()
         {
             return GetTextInternal(Words, _localizationService);
         }
 
-        public bool Equals(ApiSentenceBase other)
+        public bool Equals(ApiSentenceBase? other)
         {
-            return Equals((object)other);
+            return Equals((object?)other);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is not ApiSentenceBase other)
                 return false;

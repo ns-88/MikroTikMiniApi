@@ -16,7 +16,7 @@ namespace MikroTikMiniApi.Demo
             await connection.ConnectAsync();
 
             var routerApi = apiFactory.CreateRouterApi(connection);
-            
+
             await routerApi.AuthenticationAsync("name", "password");
 
             var sentence = await routerApi.ExecuteCommandAsync(ApiCommand.New("/interface/set")

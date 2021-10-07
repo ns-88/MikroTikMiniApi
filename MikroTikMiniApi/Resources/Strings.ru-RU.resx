@@ -157,6 +157,10 @@
     <value>Выход из системы не был произведен. Тип ответа API: "{0}". Текст ответа: "{1}".</value>
     <comment>AuthenticationLocalizationService</comment>
   </data>
+  <data name="ModelValueNotReceived" xml:space="preserve">
+    <value>Значение не было получено. Ожидаемый тип: "{0}", наименование поля: "{1}", значение ответа API: "{2}".</value>
+    <comment>ModelBase</comment>
+  </data>
   <data name="RecvSeqNotComplete" xml:space="preserve">
     <value>Получение последовательности не было завершено. Тип ответа API: "{0}". Текст ответа: "{1}".</value>
     <comment>CommandExecutionService</comment>

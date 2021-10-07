@@ -11,6 +11,7 @@ namespace MikroTikMiniApi.Factories
     using ILocalizationService = IApiSentenceLocalizationService;
     using static ApiSentenceBase;
 
+    ///<inheritdoc cref="IApiSentenceFactory"/>
     internal class ApiSentenceFactory : IApiSentenceFactory
     {
         private readonly ILocalizationService _localizationService;
@@ -20,10 +21,10 @@ namespace MikroTikMiniApi.Factories
             Guard.ThrowIfNull(localizationService, out _localizationService, nameof(localizationService));
         }
 
+        ///<inheritdoc/>
         IApiSentence IApiSentenceFactory.Create(string sentenceName, IReadOnlyList<string> words)
         {
-            Guard.ThrowIfEmptyString(sentenceName, nameof(sentenceName));
-            Guard.ThrowIfNull(words, nameof(words));
+            words ??= new List<string>();
 
             return sentenceName switch
             {
@@ -36,12 +37,16 @@ namespace MikroTikMiniApi.Factories
             };
         }
 
-        public IApiSentence CreateDoneSentence(IReadOnlyList<string> words) => new ApiDoneSentence(words, _localizationService);
+        ///<inheritdoc/>
+        public IApiDoneSentence CreateDoneSentence(IReadOnlyList<string> words) => new ApiDoneSentence(words, _localizationService);
 
-        public IApiSentence CreateReSentence(IReadOnlyList<string> words) => new ApiReSentence(words, _localizationService);
+        ///<inheritdoc/>
+        public IApiReSentence CreateReSentence(IReadOnlyList<string> words) => new ApiReSentence(words, _localizationService);
 
-        public IApiSentence CreateTrapSentence(IReadOnlyList<string> words) => new ApiTrapSentence(words, _localizationService);
+        ///<inheritdoc/>
+        public IApiTrapSentence CreateTrapSentence(IReadOnlyList<string> words) => new ApiTrapSentence(words, _localizationService);
 
-        public IApiSentence CreateFatalSentence(IReadOnlyList<string> words) => new ApiFatalSentence(words, _localizationService);
+        ///<inheritdoc/>
+        public IApiFatalSentence CreateFatalSentence(IReadOnlyList<string> words) => new ApiFatalSentence(words, _localizationService);
     }
 }

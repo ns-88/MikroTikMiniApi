@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using MikroTikMiniApi.Exceptions;
 using MikroTikMiniApi.Interfaces.Sentences;
+using MikroTikMiniApi.Resources;
 
 namespace MikroTikMiniApi.Models.Api
 {
     public abstract class ModelBase
     {
-        public string Id { get; protected set; }
+        public string? Id { get; protected set; }
 
         private static Exception GetException<TExpectedType>(string name, string value)
         {
-            return new InvalidOperationException($"Значение не было получено. Ожидаемый тип: \"{typeof(TExpectedType).Name}\", наименование поля: \"{name}\", значение ответа API: \"{value}\".");
+            return new ReceivingModelValueFaultException(string.Format(Strings.ModelValueNotReceived, typeof(TExpectedType).Name, name, value));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static string GetStringValue(string name, IApiSentence sentence)
+        protected static string? GetStringValueOrDefault(string name, IApiSentence sentence)
         {
             return sentence.TryGetWordValue(name, out var value)
                 ? value
@@ -22,7 +24,7 @@ namespace MikroTikMiniApi.Models.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static int? GetIntValue(string name, IApiSentence sentence)
+        protected static int? GetIntValueOrDefault(string name, IApiSentence sentence)
         {
             if (!sentence.TryGetWordValue(name, out var textValue))
                 return 0;
@@ -34,7 +36,7 @@ namespace MikroTikMiniApi.Models.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static bool? GetBoolValue(string name, IApiSentence sentence)
+        protected static bool? GetBoolValueOrDefault(string name, IApiSentence sentence)
         {
             if (!sentence.TryGetWordValue(name, out var textValue))
                 return null;
@@ -46,7 +48,7 @@ namespace MikroTikMiniApi.Models.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static ulong? GetUlongValue(string name, IApiSentence sentence)
+        protected static ulong? GetUlongValueOrDefault(string name, IApiSentence sentence)
         {
             if (!sentence.TryGetWordValue(name, out var textValue))
                 return null;
