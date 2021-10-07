@@ -13,6 +13,8 @@ namespace MikroTikMiniApi.Factories
     public class MicrotikApiFactory : IApiFactory
     {
         private readonly ILocalizationService _localizationService;
+
+        ///<inheritdoc/>
         public IApiSentenceFactory ApiSentenceFactory { get; }
 
         public MicrotikApiFactory()

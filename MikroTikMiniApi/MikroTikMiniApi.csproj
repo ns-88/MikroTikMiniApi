@@ -16,7 +16,17 @@
 		<NeutralLanguage>en</NeutralLanguage>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<Nullable>enable</Nullable>
+		<Version>1.0.2</Version>
 	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <DocumentationFile>MikroTikMiniApi.xml</DocumentationFile>
+	  <DefineConstants />
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Compile Update="Resources\Strings.Designer.cs">
